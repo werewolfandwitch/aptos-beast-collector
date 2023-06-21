@@ -102,9 +102,9 @@ module beast_collector::beast_generator {
         });        
     }
 
-    entry fun remove_acl(sender: &signer, address_to_remove:address) acquires TrainerManager  {                    
+    entry fun remove_acl(sender: &signer, address_to_remove:address) acquires BeastManager  {                    
         let sender_addr = signer::address_of(sender);                
-        let manager = borrow_global_mut<TrainerManager>(sender_addr);        
+        let manager = borrow_global_mut<BeastManager>(sender_addr);        
         acl::remove(&mut manager.acl, address_to_remove);        
     }
 
