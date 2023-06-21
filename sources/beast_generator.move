@@ -141,8 +141,7 @@ module beast_collector::beast_generator {
         sender: &signer, item_token_name: String, material_token_name_1:String, material_token_name_2:String
         ) acquires BeastCollection {
         let creator_address = signer::address_of(sender);
-        let collections = borrow_global_mut<BeastCollection>(creator_address);
-        let values = vector<String>[ material_token_name_1, material_token_name_2];
+        let collections = borrow_global_mut<BeastCollection>(creator_address);        
         // table::add(&mut collection.collections, item_token_name, Collection {
         //     composition: values
         // });        
