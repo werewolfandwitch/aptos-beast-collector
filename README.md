@@ -1,10 +1,6 @@
-# Werewolf and witch Aptos move Item generator
+# Werewolf and witch Aptos Beast Game
 
-- Werwolf and witch [werewolfandwitch.xyz](https://werewolfandwitch.xyz/)
-- Item management and item generator by move smart contract
-
-
-
+- Werwolf and witch Beast Game[beast.werewolfandwitch.xyz](https://werewolfandwitch.xyz/)
 
 
 License
