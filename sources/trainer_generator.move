@@ -98,9 +98,9 @@ module beast_collector::trainer_generator {
     fun mint_trainer (
         receiver: &signer, auth: &signer, minter_address:address
     ) acquires TrainerManager {    
-        let sender_address = signer::address_of(auth);
-        let manager = borrow_global<TrainerManager>(sender_address);             
-        acl::assert_contains(&manager.acl,sender_address);                           
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<TrainerManager>(auth_address);             
+        acl::assert_contains(&manager.acl, auth_address);                           
         let resource_signer = get_resource_account_cap(minter_address);                
         let resource_account_address = signer::address_of(&resource_signer);    
         let mutability_config = &vector<bool>[ false, true, true, true, true ];
