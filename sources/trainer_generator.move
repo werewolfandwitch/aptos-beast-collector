@@ -91,12 +91,14 @@ module beast_collector::trainer_generator {
                 acl_events:account::new_event_handle<AclAddEvent>(sender)
             });
         };
-
         if(!coin::is_account_registered<WarCoinType>(signer::address_of(&resource_signer))){
             coin::register<WarCoinType>(&resource_signer);
         };
-
-        
+        let mutate_setting = vector<bool>[ true, true, true ]; // TODO should check before deployment.
+        let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/1.png");
+        token::create_collection(&resource_signer, 
+            string::utf8(TRAINER_COLLECTION_NAME), 
+            string::utf8(COLLECTION_DESCRIPTION), collection_uri, 99999, mutate_setting);                
         let manager = borrow_global_mut<TrainerManager>(sender_addr);
         acl::add(&mut manager.acl, sender_addr);              
     }    
@@ -105,7 +107,7 @@ module beast_collector::trainer_generator {
         receiver: &signer, auth: &signer, minter_address:address
     ) acquires TrainerManager {    
         let auth_address = signer::address_of(auth);
-        let manager = borrow_global<TrainerManager>(minter_address);             
+        let manager = borrow_global<TrainerManager>(minter_address);
         acl::assert_contains(&manager.acl, auth_address);                           
         let resource_signer = get_resource_account_cap(minter_address);                
         let resource_account_address = signer::address_of(&resource_signer);    
@@ -113,10 +115,7 @@ module beast_collector::trainer_generator {
         if(!token::check_collection_exists(resource_account_address, string::utf8(TRAINER_COLLECTION_NAME))) {
             let mutate_setting = vector<bool>[ true, true, true ]; 
             let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/1.png");
-            token::create_collection(&resource_signer, 
-                string::utf8(TRAINER_COLLECTION_NAME), 
-                string::utf8(COLLECTION_DESCRIPTION), 
-                collection_uri, 99999, mutate_setting);        
+            token::create_collection(&resource_signer, string::utf8(TRAINER_COLLECTION_NAME), string::utf8(COLLECTION_DESCRIPTION), collection_uri, 99999, mutate_setting);        
         };
         
         let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(TRAINER_COLLECTION_NAME));        

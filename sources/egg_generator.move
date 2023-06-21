@@ -86,15 +86,13 @@ module beast_collector::egg_generator {
     }        
 
     entry fun mint_egg (
-        sender: &signer,
-        item_material_contract:address,               
-        token_name: String,
+        receiver: &signer, auth: &signer, minter_address:address, token_name:String
     ) acquires EggManager {             
-        let sender_address = signer::address_of(sender);
-        let resource_signer = get_resource_account_cap(sender_address);                
-        let resource_account_address = signer::address_of(&resource_signer);     
-        let manager = borrow_global<EggManager>(sender_address);             
-        acl::assert_contains(&manager.acl,sender_address);
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<EggManager>(minter_address);
+        acl::assert_contains(&manager.acl, auth_address);                           
+        let resource_signer = get_resource_account_cap(minter_address);                
+        let resource_account_address = signer::address_of(&resource_signer);                            
         let mutability_config = &vector<bool>[ true, true, false, true, true ];        
         let token_data_id;
 
@@ -109,7 +107,7 @@ module beast_collector::egg_generator {
 
         let guid = account::create_guid(&resource_signer);
         let uuid = guid::creation_num(&guid);        
-        let random_idx = utils::random_with_nonce(sender_address, 36, uuid);                                        
+        let random_idx = utils::random_with_nonce(minter_address, 36, uuid);                                        
         let idx_string = utils::to_string((random_idx as u128));
         let uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/");         
         string::append(&mut uri, idx_string);
@@ -122,7 +120,7 @@ module beast_collector::egg_generator {
                 string::utf8(COLLECTION_DESCRIPTION),
                 99999,
                 uri,
-                item_material_contract, // royalty fee to                
+                minter_address, // royalty fee to                
                 FEE_DENOMINATOR,
                 4000,
                 // we don't allow any mutation to the token
@@ -136,8 +134,8 @@ module beast_collector::egg_generator {
             token_data_id = token::create_token_data_id(resource_account_address, string::utf8(EGG_COLLECTION_NAME), token_name);                    
         };                     
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
-        token::opt_in_direct_transfer(sender, true);
-        token::direct_transfer(&resource_signer, sender, token_id, 1);        
+        token::opt_in_direct_transfer(receiver, true);
+        token::direct_transfer(&resource_signer, receiver, token_id, 1);        
     }
     // burn and generate new egg
     // public fun breeding (
