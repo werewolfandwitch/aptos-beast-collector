@@ -3,7 +3,7 @@
 /// This module uses a `vector` to represent the list, but can be refactored to
 /// use a "set" instead when it's available in the language in the future.
 
-module item_gen::acl {
+module beast_collector::acl {
     use std::vector;
     use std::error;
 

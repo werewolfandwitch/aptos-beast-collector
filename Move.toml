@@ -1,5 +1,5 @@
 [package]
-name = "ItemGen"
+name = "BeastCollector"
 version = "0.0.1"
 
 [dependencies]
@@ -8,9 +8,7 @@ AptosStdlib = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="ap
 AptosToken = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="aptos-move/framework/aptos-token/", rev="mainnet" }
 
 [addresses]
-item_gen ="_"
-item_material_creator ="0x816793704ba4e530bfa096b0633728ae611b59c39b58c41227b9a8d61089389d"
-item_creator ="0x816793704ba4e530bfa096b0633728ae611b59c39b58c41227b9a8d61089389d"
+beast_collector ="_"
 war_coin="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a"
 aptos_coin="0x1"
 aptos_framework="0x1"

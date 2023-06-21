@@ -1,5 +1,5 @@
 
-module item_gen::utils {    
+module beast_collector::utils {    
     use std::bcs;
     use std::string::{Self, String};
     use std::vector;    
