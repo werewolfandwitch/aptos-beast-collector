@@ -95,7 +95,7 @@ module beast_collector::trainer_generator {
         acl::add(&mut manager.acl, sender_addr);              
     }    
     // trainer url: https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/0.png
-    fun mint_trainer (
+    public fun mint_trainer (
         receiver: &signer, auth: &signer, minter_address:address
     ) acquires TrainerManager {    
         let auth_address = signer::address_of(auth);
@@ -130,7 +130,7 @@ module beast_collector::trainer_generator {
         };                                  
         let guid = account::create_guid(&resource_signer);
         let uuid = guid::creation_num(&guid);        
-        let random_idx = utils::random_with_nonce(sender_address, 36, uuid);                                        
+        let random_idx = utils::random_with_nonce(auth_address, 36, uuid);                                        
         let idx_string = utils::to_string((random_idx as u128));
         let uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/");         
         string::append(&mut uri, idx_string);
