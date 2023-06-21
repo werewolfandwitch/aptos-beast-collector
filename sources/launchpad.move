@@ -66,10 +66,9 @@ module beast_collector::launchpad {
         
     }     
 
-    entry fun mint_trainer<CoinType>(receiver: &signer, launchpad_address:address, trainer_generator:address) acquires LaunchPad{        
+    entry fun mint_trainer<CoinType>(receiver: &signer, launchpad_address:address, trainer_generator:address) acquires LaunchPad {        
         let receiver_addr = signer::address_of(receiver);
-        let resource_signer = get_resource_account_cap(launchpad_address);                
-        let resource_account_address = signer::address_of(&resource_signer);    
+        let resource_signer = get_resource_account_cap(launchpad_address);                        
         // check war coin or aptos        
         let coin_address = utils::coin_address<CoinType>();
         assert!(coin_address == @war_coin || coin_address == @aptos_coin, error::permission_denied(ENOT_AUTHORIZED));
@@ -83,10 +82,8 @@ module beast_collector::launchpad {
         assert!(coin::balance<CoinType>(receiver_addr) >= price_to_pay, error::invalid_argument(ENO_SUFFICIENT_FUND));
         let coins_to_pay = coin::withdraw<CoinType>(receiver, price_to_pay);                
         coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
-        // use resource account address for authentication         
-        let auth_address = resource_account_address;
-        let minter_address = trainer_generator;
-        trainer_generator::mint_trainer(receiver, &resource_signer, minter_address);
+        // use resource account address for authentication                         
+        trainer_generator::mint_trainer(receiver, &resource_signer, trainer_generator);
         launchpad.minted_count = launchpad.minted_count + 1; 
         
         event::emit_event(&mut launchpad.minted_events, MintedEvent { 
