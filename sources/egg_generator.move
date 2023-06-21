@@ -58,11 +58,17 @@ module beast_collector::egg_generator {
             added: address_to_add,            
         });        
     }
+
+    entry fun remove_acl(sender: &signer, address_to_remove:address) acquires TrainerManager  {                    
+        let sender_addr = signer::address_of(sender);                
+        let manager = borrow_global_mut<TrainerManager>(sender_addr);        
+        acl::remove(&mut manager.acl, address_to_remove);        
+    }
     
     // resource cab required 
     entry fun init(sender: &signer) acquires EggManager {
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"02");    
+        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"03");    
         token::initialize_token_store(&resource_signer);
         if(!exists<EggManager>(sender_addr)){            
             move_to(sender, EggManager {                

@@ -102,6 +102,12 @@ module beast_collector::beast_generator {
         });        
     }
 
+    entry fun remove_acl(sender: &signer, address_to_remove:address) acquires TrainerManager  {                    
+        let sender_addr = signer::address_of(sender);                
+        let manager = borrow_global_mut<TrainerManager>(sender_addr);        
+        acl::remove(&mut manager.acl, address_to_remove);        
+    }
+
     fun is_in_acl(sender_addr:address) : bool acquires BeastManager {
         let manager = borrow_global<BeastManager>(sender_addr);
         let acl = manager.acl;        
@@ -110,7 +116,7 @@ module beast_collector::beast_generator {
     // resource cab required 
     entry fun init<WarCoinType>(sender: &signer) acquires BeastManager{
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"01");    
+        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"04");    
         token::initialize_token_store(&resource_signer);
         if(!exists<BeastManager>(sender_addr)){            
             move_to(sender, BeastManager {                

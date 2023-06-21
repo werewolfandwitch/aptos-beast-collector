@@ -73,6 +73,12 @@ module beast_collector::trainer_generator {
         });        
     }
 
+    entry fun remove_acl(sender: &signer, address_to_remove:address) acquires TrainerManager  {                    
+        let sender_addr = signer::address_of(sender);                
+        let manager = borrow_global_mut<TrainerManager>(sender_addr);        
+        acl::remove(&mut manager.acl, address_to_remove);        
+    }
+
     // resource cab required 
     entry fun init<WarCoinType>(sender: &signer) acquires TrainerManager{
         let sender_addr = signer::address_of(sender);                

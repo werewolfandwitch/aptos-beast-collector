@@ -45,7 +45,7 @@ module beast_collector::launchpad {
 
     entry fun init<AptosCoin, WarCoinType>(sender: &signer, launchpad_public_open:u64) {
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"01");        
+        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"02");        
         if(!exists<LaunchPad>(sender_addr)){            
             move_to(sender, LaunchPad {                
                 signer_cap,
