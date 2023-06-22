@@ -212,6 +212,7 @@ module beast_collector::trainer_generator {
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         let level = property_map::read_u64(&pm, &string::utf8(PROPERTY_LEVEL));
         let exp = property_map::read_u64(&pm, &string::utf8(PROPERTY_EXP));
+        exp = exp + add_exp;
         assert!(level < 5, error::permission_denied(ENOT_AUTHORIZED)); 
         if(level < 5) {
             if(exp > 100) {
@@ -228,7 +229,7 @@ module beast_collector::trainer_generator {
                 ],  // property_keys                
                 vector<vector<u8>>[
                     bcs::to_bytes<u64>(&level),
-                    bcs::to_bytes<u64>(&(exp + add_exp))
+                    bcs::to_bytes<u64>(&(exp))
                 ],  // values 
                 vector<String>[
                     string::utf8(b"u64"),
