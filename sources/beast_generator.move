@@ -119,7 +119,7 @@ module beast_collector::beast_generator {
     // resource cab required 
     entry fun init<WarCoinType>(sender: &signer) acquires BeastManager{
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"04");    
+        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"05");    
         token::initialize_token_store(&resource_signer);
         if(!exists<BeastManager>(sender_addr)){            
             move_to(sender, BeastManager {                
@@ -207,9 +207,12 @@ module beast_collector::beast_generator {
                 // we don't allow any mutation to the token
                 token::create_token_mutability_config(mutability_config),
                 // type
-                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE)],  // property_keys                
-                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true)],  // values 
-                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool")],
+                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE)
+                    ],  // property_keys                
+                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true)
+                    ],  // values 
+                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool")
+                    ],
         );
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(sender, true);

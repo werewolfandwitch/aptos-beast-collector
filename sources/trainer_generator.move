@@ -1,12 +1,13 @@
 module beast_collector::trainer_generator {        
     use std::error;
     use std::bcs;
+    use aptos_framework::timestamp;
     use std::signer;    
     use std::string::{Self, String};    
     use std::option::{Self};
-    use aptos_std::table::{Self, Table};  
+    use aptos_std::table::{Self};  
     use aptos_token::property_map::{Self};
-    use aptos_token::token::{Self}; 
+    use aptos_token::token::{Self, TokenId}; 
     use aptos_framework::coin;    
     use aptos_framework::event::{Self, EventHandle};
     use std::vector;
@@ -23,7 +24,7 @@ module beast_collector::trainer_generator {
     const WAR_COIN_DECIMAL:u64 = 100000000;   
     
     // collection name / info
-    const TRAINER_COLLECTION_NAME:vector<u8> = b"W&W Beast Collector";    
+    const TRAINER_COLLECTION_NAME:vector<u8> = b"W&W Beast Collector";
     const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector https://beast.werewolfandwitch.xyz/";
     // item property
     
@@ -165,7 +166,7 @@ module beast_collector::trainer_generator {
                 vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true),
                     bcs::to_bytes<u64>(&0),
                     bcs::to_bytes<u64>(&1),
-                    bcs::to_bytes<u64>(&0),
+                    bcs::to_bytes<u64>(&timestamp::now_seconds()),
                     bcs::to_bytes<u64>(&grade)
                 ],  // values 
                 vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool"),
@@ -177,6 +178,28 @@ module beast_collector::trainer_generator {
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(receiver, true);
         token::direct_transfer(&resource_signer, receiver, token_id, 1);        
+    }
+
+    public fun extend_exploration_time (
+        receiver: &signer, auth: &signer, trainer_address:address, token_id: TokenId,
+    ) acquires TrainerManager {  
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<TrainerManager>(trainer_address);
+        acl::assert_contains(&manager.acl, auth_address);                           
+        let resource_signer = get_resource_account_cap(trainer_address);                
+        let resource_account_address = signer::address_of(&resource_signer);  
+        
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
+
+        token::mutate_one_token(            
+            &resource_signer,
+            signer::address_of(receiver),
+            token_id,            
+            vector<String>[string::utf8(PROPERTY_NEXT_EXPLORATION_TIME)],  // property_keys                
+            vector<vector<u8>>[bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400) )],  // values 
+            vector<String>[string::utf8(b"u64")],      // type
+        );
     }
           
 }

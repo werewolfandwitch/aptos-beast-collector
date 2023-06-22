@@ -8,8 +8,7 @@ module beast_collector::egg_generator {
     use beast_collector::acl::{Self};    
     use aptos_framework::coin;
     use aptos_framework::event::{Self, EventHandle};
-    use aptos_framework::guid;
-    use beast_collector::utils;    
+    use aptos_framework::guid;    
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
     const BURNABLE_BY_OWNER: vector<u8> = b"TOKEN_BURNABLE_BY_OWNER";
@@ -23,9 +22,8 @@ module beast_collector::egg_generator {
     // collection name / info
     const EGG_COLLECTION_NAME:vector<u8> = b"W&W EGG";
     const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector https://beast.werewolfandwitch.xyz/";
-
-    const PROPERTY_HATCH_TIME: vector<u8> = b"W_HATCH_TIME"; 
-    const PROPERTY_LEVEL: vector<u8> = b"W_RARITY"; // (Normal / Rare / Epic)
+    
+    const PROPERTY_RARITY: vector<u8> = b"W_RARITY"; // (Common(1) / Rare(2) / Epic (3))
 
     struct EggManager has store, key {          
         signer_cap: account::SignerCapability,                 
@@ -68,7 +66,7 @@ module beast_collector::egg_generator {
     // resource cab required 
     entry fun init(sender: &signer) acquires EggManager {
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"03");    
+        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"04");    
         token::initialize_token_store(&resource_signer);
         if(!exists<EggManager>(sender_addr)){            
             move_to(sender, EggManager {                
@@ -108,9 +106,9 @@ module beast_collector::egg_generator {
                 string::utf8(COLLECTION_DESCRIPTION), 
                 collection_uri, 99999, mutate_setting);        
         };
-        let uri = if (egg_type == 0) {
+        let uri = if (egg_type == 1) {
             string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_common.png")
-        } else if (egg_type == 1) {
+        } else if (egg_type == 2) {
             string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_rare.png")
         } else {
             string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_epic.png")
@@ -130,9 +128,15 @@ module beast_collector::egg_generator {
                 // we don't allow any mutation to the token
                 token::create_token_mutability_config(mutability_config),
                 // type
-                vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE)],  // property_keys                
-                vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&false)],  // values 
-                vector<String>[string::utf8(b"bool"),string::utf8(b"bool")],
+                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE), 
+                    string::utf8(PROPERTY_RARITY), 
+                    ],  // property_keys                
+                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true),
+                    bcs::to_bytes<u64>(&egg_type),                    
+                    ],  // values 
+                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool"),
+                    string::utf8(b"u64"),
+                    ],
             );            
         } else {
             token_data_id = token::create_token_data_id(resource_account_address, string::utf8(EGG_COLLECTION_NAME), token_name);                    
