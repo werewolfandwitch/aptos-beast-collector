@@ -243,7 +243,7 @@ module beast_collector::trainer_generator {
     }
 
     entry fun upgrade (
-        receiver: &signer, _auth: &signer, trainer_address:address, token_creator: address, trainer_token_name:String, property_version:u64
+        receiver: &signer, trainer_address:address, token_creator: address, trainer_token_name:String, property_version:u64
     ) acquires TrainerManager {  
         let token_id = token::create_token_id_raw(token_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);                                                
         let resource_signer = get_resource_account_cap(trainer_address);                                
