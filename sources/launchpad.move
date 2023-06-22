@@ -9,6 +9,7 @@ module beast_collector::launchpad {
     use aptos_framework::account;    
     use beast_collector::utils;
     use beast_collector::trainer_generator;
+    use aptos_framework::guid;
 
     const MAX_AMOUNT:u64 = 1000;
     const APT_PRICE:u64 = 50000000;
@@ -82,8 +83,22 @@ module beast_collector::launchpad {
         assert!(coin::balance<CoinType>(receiver_addr) >= price_to_pay, error::invalid_argument(ENO_SUFFICIENT_FUND));
         let coins_to_pay = coin::withdraw<CoinType>(receiver, price_to_pay);                
         coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
-        // use resource account address for authentication                         
-        trainer_generator::mint_trainer(receiver, &resource_signer, trainer_generator);
+        // use resource account address for authentication                    
+        let guid = account::create_guid(&resource_signer);
+        let uuid = guid::creation_num(&guid);
+        let random_idx = utils::random_with_nonce(receiver_addr, 1000, uuid) + 1;
+        let grade = if(random_idx < 800) { // 80%
+            1
+        } else if (random_idx >= 800 && random_idx < 930) { // 13%
+            2
+        } else if (random_idx >= 930 && random_idx < 970) { // 5%
+            3
+        } else if (random_idx >= 970 && random_idx < 990) { // 2%
+            4
+        } else {  // 1%
+            5
+        };  
+        trainer_generator::mint_trainer(receiver, &resource_signer, trainer_generator, grade);
         launchpad.minted_count = launchpad.minted_count + 1; 
         
         event::emit_event(&mut launchpad.minted_events, MintedEvent { 

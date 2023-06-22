@@ -104,7 +104,7 @@ module beast_collector::trainer_generator {
     }    
     // trainer url: https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/0.png
     public fun mint_trainer (
-        receiver: &signer, auth: &signer, minter_address:address
+        receiver: &signer, auth: &signer, minter_address:address, grade: u64
     ) acquires TrainerManager {    
         let auth_address = signer::address_of(auth);
         let manager = borrow_global<TrainerManager>(minter_address);
@@ -140,7 +140,10 @@ module beast_collector::trainer_generator {
         let uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/");         
         string::append(&mut uri, idx_string);
         string::append_utf8(&mut uri, b".png");
-        // 0.png
+        // const PROPERTY_EXP: vector<u8> = b"W_EXP"; // 100 MAX, 100 EXP => 1 LEVEL UP
+        // const PROPERTY_LEVEL: vector<u8> = b"W_LEVEL"; // 5 LEVEL MAX, 5 LEVEL with 100 EXP can upgrade GRADE of trainer
+        // const PROPERTY_NEXT_EXPLORATION_TIME: vector<u8> = b"W_NEXT_EXPLORATION_TIME";
+        // const PROPERTY_GRADE: vector<u8> = b"W_GRADE"; // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
         let token_data_id = token::create_tokendata(
                 &resource_signer,
                 string::utf8(TRAINER_COLLECTION_NAME),
@@ -154,24 +157,26 @@ module beast_collector::trainer_generator {
                 // we don't allow any mutation to the token
                 token::create_token_mutability_config(mutability_config),
                 // type
-                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE)],  // property_keys                
-                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true)],  // values 
-                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool")],
+                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE), 
+                    string::utf8(PROPERTY_EXP), 
+                    string::utf8(PROPERTY_LEVEL), 
+                    string::utf8(PROPERTY_NEXT_EXPLORATION_TIME), 
+                    string::utf8(PROPERTY_GRADE)],  // property_keys                
+                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true),
+                    bcs::to_bytes<u64>(&0),
+                    bcs::to_bytes<u64>(&1),
+                    bcs::to_bytes<u64>(&0),
+                    bcs::to_bytes<u64>(&grade)
+                ],  // values 
+                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64")],
         );
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(receiver, true);
         token::direct_transfer(&resource_signer, receiver, token_id, 1);        
     }
-    
-    // entry fun trainer_level_up<WarCoinType> (
-    //     sender: &signer, contract_address:address,        
-    //     token_name:String, collection_name:String, creator:address, property_version:u64
-    // ) acquires TrainerManager {                    
-    // }
-
-    // entry fun trainer_grade_up<WarCoinType> (
-    //     sender: &signer, contract_address:address,        
-    //     token_name:String, collection_name:String, creator:address, property_version:u64
-    // ) acquires TrainerManager {                    
-    // }        
+          
 }

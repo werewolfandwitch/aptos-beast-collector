@@ -9,7 +9,7 @@ module beast_collector::egg_generator {
     use aptos_framework::coin;
     use aptos_framework::event::{Self, EventHandle};
     use aptos_framework::guid;
-    use beast_collector::utils;
+    use beast_collector::utils;    
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
     const BURNABLE_BY_OWNER: vector<u8> = b"TOKEN_BURNABLE_BY_OWNER";
@@ -77,7 +77,13 @@ module beast_collector::egg_generator {
                 acl_events:account::new_event_handle<AclAddEvent>(sender)
             });
         };                
-        
+        let mutate_setting = vector<bool>[ true, true, true ]; // TODO should check before deployment.
+        // egg
+        let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_epic.png");
+        token::create_collection(&resource_signer, 
+            string::utf8(EGG_COLLECTION_NAME), 
+            string::utf8(COLLECTION_DESCRIPTION), 
+            collection_uri, 99999, mutate_setting);                
         let manager = borrow_global_mut<EggManager>(sender_addr);             
         acl::add(&mut manager.acl, sender_addr);
         event::emit_event(&mut manager.acl_events, AclAddEvent { 
@@ -85,33 +91,31 @@ module beast_collector::egg_generator {
         });        
     }        
 
-    entry fun mint_egg (
-        receiver: &signer, auth: &signer, minter_address:address, token_name:String
+    public fun mint_egg (
+        receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64
     ) acquires EggManager {             
         let auth_address = signer::address_of(auth);
         let manager = borrow_global<EggManager>(minter_address);
         acl::assert_contains(&manager.acl, auth_address);                           
         let resource_signer = get_resource_account_cap(minter_address);                
         let resource_account_address = signer::address_of(&resource_signer);                            
-        let mutability_config = &vector<bool>[ true, true, false, true, true ];        
-        let token_data_id;
-
+        let mutability_config = &vector<bool>[ false, true, true, true, true ];                
         if(!token::check_collection_exists(resource_account_address, string::utf8(EGG_COLLECTION_NAME))) {
             let mutate_setting = vector<bool>[ true, true, true ]; 
-            let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/1.png"); // TODO Egg pic
+            let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_epic.png"); 
             token::create_collection(&resource_signer, 
                 string::utf8(EGG_COLLECTION_NAME), 
                 string::utf8(COLLECTION_DESCRIPTION), 
                 collection_uri, 99999, mutate_setting);        
         };
-
-        let guid = account::create_guid(&resource_signer);
-        let uuid = guid::creation_num(&guid);        
-        let random_idx = utils::random_with_nonce(minter_address, 36, uuid);                                        
-        let idx_string = utils::to_string((random_idx as u128));
-        let uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/");         
-        string::append(&mut uri, idx_string);
-        string::append_utf8(&mut uri, b".png");
+        let uri = if (egg_type == 0) {
+            string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_common.png")
+        } else if (egg_type == 1) {
+            string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_rare.png")
+        } else {
+            string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_epic.png")
+        };        
+        let token_data_id;
         if(!token::check_tokendata_exists(resource_account_address, string::utf8(EGG_COLLECTION_NAME), token_name)) {
             token_data_id = token::create_tokendata(
                 &resource_signer,

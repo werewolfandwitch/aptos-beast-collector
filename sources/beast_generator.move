@@ -48,10 +48,13 @@ module beast_collector::beast_generator {
 
     struct Evolution has key, store, drop {
         stage_1: String,
+        name_1: String,
         stage_uri_1: String,
         stage_2: String,
+        name_2: String,
         stage_uri_2: String,
         stage_3: String,
+        name_3: String,
         stage_uri_3: String,
         story: String
     }
@@ -153,11 +156,11 @@ module beast_collector::beast_generator {
     }
 
      entry fun remove_collection (
-        sender: &signer, item_token_name: String, material_token_name_1:String, material_token_name_2:String
+        sender: &signer, beast_number: u64, 
         ) acquires BeastCollection {  
         let creator_address = signer::address_of(sender);
         let collection = borrow_global_mut<BeastCollection>(creator_address);
-        // table::remove(&mut collection.collections, item_token_name);                                                          
+        table::remove(&mut collection.collections, beast_number);                                                          
     }
 
     fun mint_beast (
@@ -167,14 +170,14 @@ module beast_collector::beast_generator {
         assert!(is_in_acl(minter_address), ENOT_IN_ACL);                           
         let resource_signer = get_resource_account_cap(minter_address);                
         let resource_account_address = signer::address_of(&resource_signer);    
-        let mutability_config = &vector<bool>[ false, true, true, true, true ];
+        let mutability_config = &vector<bool>[ true, true, true, true, true ];
         if(!token::check_collection_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME))) {
             let mutate_setting = vector<bool>[ true, true, true ]; // TODO should check before deployment.
-            let collection_uri = string::utf8(b"https://werewolfandwitch-mainnet.s3.ap-northeast-2.amazonaws.com/item-image/flameheart_bow.png");
+            let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/beast/1.png");
             token::create_collection(&resource_signer, 
                 string::utf8(BEAST_COLLECTION_NAME), 
                 string::utf8(COLLECTION_DESCRIPTION), 
-                collection_uri, 9999, mutate_setting);        
+                collection_uri, 99999, mutate_setting);        
         };
         
         let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(BEAST_COLLECTION_NAME));        
