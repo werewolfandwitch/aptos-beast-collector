@@ -84,7 +84,8 @@ module beast_collector::trainer_exploration {
         // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
         // extend time
-        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, 30);                
+        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
+        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);                
     }
 
     entry fun trainer_exploration_2<CoinType>(receiver: &signer, 
@@ -129,7 +130,8 @@ module beast_collector::trainer_exploration {
         let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
         // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
-        // extend time
-        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, 30);             
+        // extend time and add exp
+        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
+        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);                          
     }
 }
