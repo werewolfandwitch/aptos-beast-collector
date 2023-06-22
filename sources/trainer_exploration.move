@@ -118,7 +118,7 @@ module beast_collector::trainer_exploration {
         if(random_idx < percentage) {
             // get egg receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64
             let random_rarity = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
-            let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 5, uuid) + 1;
+            let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 5, uuid + 1) + 1;
             let i = 0;
             while(i < random_eggcount) {
                 egg_generator::mint_egg(receiver,&resource_signer, egg_contract, random_rarity); 
