@@ -32,6 +32,8 @@ module beast_collector::trainer_generator {
     const PROPERTY_LEVEL: vector<u8> = b"W_LEVEL"; // 5 LEVEL MAX, 5 LEVEL with 100 EXP can upgrade GRADE of trainer
     const PROPERTY_NEXT_EXPLORATION_TIME: vector<u8> = b"W_NEXT_EXPLORATION_TIME";
     const PROPERTY_GRADE: vector<u8> = b"W_GRADE"; // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
+
+    const ENOT_AUTHORIZED:u64 = 1;
   
 
     struct AclAddEvent has drop, store {
@@ -185,12 +187,9 @@ module beast_collector::trainer_generator {
     ) acquires TrainerManager {  
         let auth_address = signer::address_of(auth);
         let manager = borrow_global<TrainerManager>(trainer_address);
-        acl::assert_contains(&manager.acl, auth_address);                           
-        let resource_signer = get_resource_account_cap(trainer_address);                
-        let resource_account_address = signer::address_of(&resource_signer);  
-        
-        let pm = token::get_property_map(signer::address_of(receiver), token_id);
-        let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
+        acl::assert_contains(&manager.acl, auth_address);   
+
+        let resource_signer = get_resource_account_cap(trainer_address);                        
 
         token::mutate_one_token(            
             &resource_signer,
@@ -201,5 +200,76 @@ module beast_collector::trainer_generator {
             vector<String>[string::utf8(b"u64")],      // type
         );
     }
-          
+
+    public fun add_exp (
+        receiver: &signer, auth: &signer, trainer_address:address, token_id: TokenId, add_exp:u64,
+    ) acquires TrainerManager {  
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<TrainerManager>(trainer_address);
+        acl::assert_contains(&manager.acl, auth_address);   
+                                
+        let resource_signer = get_resource_account_cap(trainer_address);                
+        let resource_account_address = signer::address_of(&resource_signer);  
+        
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        let level = property_map::read_u64(&pm, &string::utf8(PROPERTY_LEVEL));
+        let exp = property_map::read_u64(&pm, &string::utf8(PROPERTY_EXP));        
+        if(level < 5) {
+            if(exp > 100) {
+                exp = exp - 100;
+                level = level + 1;
+            };
+            token::mutate_one_token(            
+                &resource_signer,
+                signer::address_of(receiver),
+                token_id,            
+                vector<String>[
+                    string::utf8(PROPERTY_LEVEL),
+                    string::utf8(PROPERTY_EXP)
+                ],  // property_keys                
+                vector<vector<u8>>[
+                    bcs::to_bytes<u64>(&level),
+                    bcs::to_bytes<u64>(&exp)
+                ],  // values 
+                vector<String>[
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                ],      // type
+            );
+        }        
+    }
+
+    entry fun upgrade (
+        receiver: &signer, auth: &signer, trainer_address:address, token_creator: address, trainer_token_name:String, property_version:u64
+    ) acquires TrainerManager {  
+        let token_id = token::create_token_id_raw(token_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);        
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<TrainerManager>(trainer_address);
+        acl::assert_contains(&manager.acl, auth_address);   
+                                
+        let resource_signer = get_resource_account_cap(trainer_address);                        
+        
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        let level = property_map::read_u64(&pm, &string::utf8(PROPERTY_LEVEL));
+        let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
+        assert!(level == 5, error::permission_denied(ENOT_AUTHORIZED)); 
+        assert!(grade < 6, error::permission_denied(ENOT_AUTHORIZED)); 
+        token::mutate_one_token(            
+            &resource_signer,
+            signer::address_of(receiver),
+            token_id,            
+            vector<String>[
+                string::utf8(PROPERTY_LEVEL),
+                string::utf8(PROPERTY_GRADE)
+            ],  // property_keys                
+            vector<vector<u8>>[
+                bcs::to_bytes<u64>(&1),
+                bcs::to_bytes<u64>(&(grade + 1))
+            ],  // values 
+            vector<String>[
+                string::utf8(b"u64"),
+                string::utf8(b"u64"),
+            ],      // type
+        );                              
+    }          
 }

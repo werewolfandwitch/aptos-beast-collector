@@ -7,8 +7,7 @@ module beast_collector::egg_generator {
     use aptos_token::token::{Self};
     use beast_collector::acl::{Self};    
     use aptos_framework::coin;
-    use aptos_framework::event::{Self, EventHandle};
-    use aptos_framework::guid;    
+    use aptos_framework::event::{Self, EventHandle};    
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
     const BURNABLE_BY_OWNER: vector<u8> = b"TOKEN_BURNABLE_BY_OWNER";
