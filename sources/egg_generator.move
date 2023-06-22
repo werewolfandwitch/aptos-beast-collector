@@ -116,7 +116,6 @@ module beast_collector::egg_generator {
             string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_epic.png")
         };        
         
-
         let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(EGG_COLLECTION_NAME));        
         let new_supply = option::extract<u64>(supply_count);                        
         let i = 0;

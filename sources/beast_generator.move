@@ -169,6 +169,8 @@ module beast_collector::beast_generator {
         beast_manager.maximum_beast_count = beast_manager.maximum_beast_count - 1;
     }
 
+    
+
     public fun mint_beast (
         sender: &signer,auth: &signer, minter_address:address, beast_number:u64
     ) acquires BeastManager {    

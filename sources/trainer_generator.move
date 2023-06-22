@@ -229,7 +229,7 @@ module beast_collector::trainer_generator {
                 ],  // property_keys                
                 vector<vector<u8>>[
                     bcs::to_bytes<u64>(&level),
-                    bcs::to_bytes<u64>(&(exp))
+                    bcs::to_bytes<u64>(&exp)
                 ],  // values 
                 vector<String>[
                     string::utf8(b"u64"),
