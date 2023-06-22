@@ -46,14 +46,11 @@ module beast_collector::beast_generator {
     }
 
     struct Evolution has key, store, drop {
-        stage_1: String,
-        name_1: String,
+        stage_name_1: String,        
         stage_uri_1: String,
-        stage_2: String,
-        name_2: String,
+        stage_name_2: String,        
         stage_uri_2: String,
-        stage_3: String,
-        name_3: String,
+        stage_name_3: String,        
         stage_uri_3: String,
         story: String
     }
@@ -72,6 +69,7 @@ module beast_collector::beast_generator {
     struct BeastManager has store, key {          
         signer_cap: account::SignerCapability,
         acl: acl::ACL,
+        maximum_beast_count:u64,
         acl_events:EventHandle<AclAddEvent>,
         token_minting_events: EventHandle<MintedEvent>,
         collection_add_events:EventHandle<CollectionAdded>,                                                  
@@ -118,6 +116,7 @@ module beast_collector::beast_generator {
             move_to(sender, BeastManager {                
                 signer_cap,  
                 acl: acl::empty(),
+                maximum_beast_count: 0,
                 acl_events:account::new_event_handle<AclAddEvent>(sender),
                 token_minting_events: account::new_event_handle<MintedEvent>(sender),
                 collection_add_events: account::new_event_handle<CollectionAdded>(sender),                                                  
@@ -134,13 +133,25 @@ module beast_collector::beast_generator {
     }    
 
     entry fun add_collection (
-        sender: &signer, item_token_name: String, material_token_name_1:String, material_token_name_2:String
-        ) acquires BeastCollection {
+        sender: &signer, beast_number: u64,
+        stage_name_1: String, stage_uri_1: String, 
+        stage_name_2: String, stage_uri_2: String, 
+        stage_name_3: String, stage_uri_3: String, 
+        story: String,
+        ) acquires BeastCollection, BeastManager {
         let creator_address = signer::address_of(sender);
-        let collections = borrow_global_mut<BeastCollection>(creator_address);        
-        // table::add(&mut collection.collections, item_token_name, Collection {
-        //     composition: values
-        // });        
+        let collections = borrow_global_mut<BeastCollection>(creator_address);
+        let beast_manager = borrow_global_mut<BeastManager>(creator_address);
+        beast_manager.maximum_beast_count = beast_manager.maximum_beast_count + 1;
+        table::add(&mut collections.collections, beast_number, Evolution {
+            stage_name_1,            
+            stage_uri_1,
+            stage_name_2, 
+            stage_uri_2,
+            stage_name_3,
+            stage_uri_3,
+            story: story
+        });        
         // event::emit_event(&mut recieps.recipe_add_events, CollectionAdded { 
         //     material_1: material_token_name_1,        
         //     material_2: material_token_name_2,
@@ -150,10 +161,12 @@ module beast_collector::beast_generator {
 
      entry fun remove_collection (
         sender: &signer, beast_number: u64, 
-        ) acquires BeastCollection {  
+        ) acquires BeastCollection,BeastManager {  
         let creator_address = signer::address_of(sender);
         let collection = borrow_global_mut<BeastCollection>(creator_address);
         table::remove(&mut collection.collections, beast_number);                                                          
+        let beast_manager = borrow_global_mut<BeastManager>(creator_address);
+        beast_manager.maximum_beast_count = beast_manager.maximum_beast_count - 1;
     }
 
     public fun mint_beast (
@@ -164,7 +177,6 @@ module beast_collector::beast_generator {
         acl::assert_contains(&manager.acl, auth_address);                           
         let resource_signer = get_resource_account_cap(minter_address);                
         let resource_account_address = signer::address_of(&resource_signer);    
-
         let mutability_config = &vector<bool>[ true, true, true, true, true ];
         if(!token::check_collection_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME))) {
             let mutate_setting = vector<bool>[ true, true, true ]; // TODO should check before deployment.
@@ -173,13 +185,13 @@ module beast_collector::beast_generator {
                 string::utf8(BEAST_COLLECTION_NAME), 
                 string::utf8(COLLECTION_DESCRIPTION), 
                 collection_uri, 99999, mutate_setting);        
-        };
-        
+        };        
         let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(BEAST_COLLECTION_NAME));        
         let new_supply = option::extract<u64>(supply_count);                        
         let i = 0;
+        let token_name = string::utf8(BEAST_COLLECTION_NAME);
         while (i <= new_supply) {
-            let new_token_name = token_name;                
+            let new_token_name = string::utf8(BEAST_COLLECTION_NAME);                
             string::append_utf8(&mut new_token_name, b" #");
             let count_string = utils::to_string((i as u128));
             string::append(&mut new_token_name, count_string);                                
@@ -188,14 +200,15 @@ module beast_collector::beast_generator {
                 break
             };
             i = i + 1;
-        };                                  
+        };                  
+        let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/beast/1.png");                
         let token_data_id = token::create_tokendata(
                 &resource_signer,
                 string::utf8(BEAST_COLLECTION_NAME),
                 token_name,
                 string::utf8(COLLECTION_DESCRIPTION),
                 1, // 1 maximum for NFT 
-                target_item_uri, 
+                collection_uri, // TODO should be changed. 
                 minter_address, // royalty fee to                
                 FEE_DENOMINATOR,
                 4000, // TODO:: should be check later::royalty_points_numerator
