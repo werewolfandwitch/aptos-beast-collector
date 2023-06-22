@@ -84,8 +84,7 @@ module beast_collector::trainer_exploration {
         // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
         // extend time
-        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, 30);        
-        trainer_generator::extend_exploration_time(receiver, &resource_signer, trainer_contract, token_id);        
+        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, 30);                
     }
 
     entry fun trainer_exploration_2<CoinType>(receiver: &signer, 
@@ -131,7 +130,6 @@ module beast_collector::trainer_exploration {
         // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
         // extend time
-        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, 30);        
-        trainer_generator::extend_exploration_time(receiver, &resource_signer, trainer_contract, token_id);        
+        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, 30);             
     }
 }

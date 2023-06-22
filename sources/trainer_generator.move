@@ -195,7 +195,7 @@ module beast_collector::trainer_generator {
             signer::address_of(receiver),
             token_id,            
             vector<String>[string::utf8(PROPERTY_NEXT_EXPLORATION_TIME)],  // property_keys                
-            vector<vector<u8>>[bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400) )],  // values 
+            vector<vector<u8>>[bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400))],  // values 
             vector<String>[string::utf8(b"u64")],      // type
         );
     }
@@ -225,15 +225,18 @@ module beast_collector::trainer_generator {
                 token_id,            
                 vector<String>[
                     string::utf8(PROPERTY_LEVEL),
-                    string::utf8(PROPERTY_EXP)
+                    string::utf8(PROPERTY_EXP),
+                    string::utf8(PROPERTY_NEXT_EXPLORATION_TIME)
                 ],  // property_keys                
                 vector<vector<u8>>[
                     bcs::to_bytes<u64>(&level),
-                    bcs::to_bytes<u64>(&exp)
+                    bcs::to_bytes<u64>(&exp),
+                    bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400))
                 ],  // values 
                 vector<String>[
                     string::utf8(b"u64"),
                     string::utf8(b"u64"),
+                    string::utf8(b"u64")
                 ],      // type
             );
         }        
