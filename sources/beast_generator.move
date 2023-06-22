@@ -5,7 +5,8 @@ module beast_collector::beast_generator {
     use std::string::{Self, String};    
     use std::option::{Self};
     use aptos_std::table::{Self, Table};  
-    use aptos_token::property_map::{Self};    
+    use aptos_token::property_map::{Self};
+    use aptos_token::token::{Self, TokenId};     
     use aptos_framework::coin;    
     use aptos_framework::event::{Self, EventHandle};
     use std::vector;

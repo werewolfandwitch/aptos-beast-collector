@@ -208,8 +208,7 @@ module beast_collector::trainer_generator {
         let manager = borrow_global<TrainerManager>(trainer_address);
         acl::assert_contains(&manager.acl, auth_address);   
                                 
-        let resource_signer = get_resource_account_cap(trainer_address);                
-        let resource_account_address = signer::address_of(&resource_signer);  
+        let resource_signer = get_resource_account_cap(trainer_address);                       
         
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         let level = property_map::read_u64(&pm, &string::utf8(PROPERTY_LEVEL));
