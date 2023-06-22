@@ -175,43 +175,43 @@ module beast_collector::beast_generator {
                 collection_uri, 99999, mutate_setting);        
         };
         
-        // let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(BEAST_COLLECTION_NAME));        
-        // let new_supply = option::extract<u64>(supply_count);                        
-        // let i = 0;
-        // while (i <= new_supply) {
-        //     let new_token_name = token_name;                
-        //     string::append_utf8(&mut new_token_name, b" #");
-        //     let count_string = utils::to_string((i as u128));
-        //     string::append(&mut new_token_name, count_string);                                
-        //     if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_token_name)) {
-        //         token_name = new_token_name;                
-        //         break
-        //     };
-        //     i = i + 1;
-        // };                                  
-        // let token_data_id = token::create_tokendata(
-        //         &resource_signer,
-        //         string::utf8(BEAST_COLLECTION_NAME),
-        //         token_name,
-        //         string::utf8(COLLECTION_DESCRIPTION),
-        //         1, // 1 maximum for NFT 
-        //         target_item_uri, 
-        //         minter_address, // royalty fee to                
-        //         FEE_DENOMINATOR,
-        //         4000, // TODO:: should be check later::royalty_points_numerator
-        //         // we don't allow any mutation to the token
-        //         token::create_token_mutability_config(mutability_config),
-        //         // type
-        //         vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE)
-        //             ],  // property_keys                
-        //         vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true)
-        //             ],  // values 
-        //         vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool")
-        //             ],
-        // );
-        // let token_id = token::mint_token(&resource_signer, token_data_id, 1);
-        // token::opt_in_direct_transfer(sender, true);
-        // token::direct_transfer(&resource_signer, sender, token_id, 1);        
+        let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(BEAST_COLLECTION_NAME));        
+        let new_supply = option::extract<u64>(supply_count);                        
+        let i = 0;
+        while (i <= new_supply) {
+            let new_token_name = token_name;                
+            string::append_utf8(&mut new_token_name, b" #");
+            let count_string = utils::to_string((i as u128));
+            string::append(&mut new_token_name, count_string);                                
+            if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_token_name)) {
+                token_name = new_token_name;                
+                break
+            };
+            i = i + 1;
+        };                                  
+        let token_data_id = token::create_tokendata(
+                &resource_signer,
+                string::utf8(BEAST_COLLECTION_NAME),
+                token_name,
+                string::utf8(COLLECTION_DESCRIPTION),
+                1, // 1 maximum for NFT 
+                target_item_uri, 
+                minter_address, // royalty fee to                
+                FEE_DENOMINATOR,
+                4000, // TODO:: should be check later::royalty_points_numerator
+                // we don't allow any mutation to the token
+                token::create_token_mutability_config(mutability_config),
+                // type
+                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE)
+                    ],  // property_keys                
+                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true)
+                    ],  // values 
+                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool")
+                    ],
+        );
+        let token_id = token::mint_token(&resource_signer, token_data_id, 1);
+        token::opt_in_direct_transfer(sender, true);
+        token::direct_transfer(&resource_signer, sender, token_id, 1);        
     }
        
 }
