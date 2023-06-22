@@ -7,8 +7,9 @@ module beast_collector::trainer_exploration {
     use std::signer;    
     use aptos_token::token::{Self, TokenId}; 
     use std::string::{Self, String};    
-    use aptos_token::property_map::{Self};
-    use aptos_framework::account;    
+    use aptos_token::property_map::{Self};    
+    use aptos_framework::guid;
+    use aptos_framework::account;
     
 
     // check collection creator 
@@ -41,9 +42,11 @@ module beast_collector::trainer_exploration {
         };
     }   
 
-    entry fun trainer_exploration<CoinType>(receiver: &signer, trainer_token_name:String, trainer_creator:address, property_version:u64, exp_address:address, trainer_contract:address) acquires Exploration {
+    entry fun trainer_exploration<CoinType>(receiver: &signer, 
+    trainer_token_name:String, trainer_creator:address, property_version:u64, exporation_address:address, egg_contract:address, 
+        trainer_contract:address) acquires Exploration {
         let token_id = token::create_token_id_raw(trainer_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);        
-        let resource_signer = get_resource_account_cap(exp_address);
+        let resource_signer = get_resource_account_cap(exporation_address);
 
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
 
@@ -62,16 +65,16 @@ module beast_collector::trainer_exploration {
         } else {
             percentage = 85;
         };
-        let guid = account::create_guid(&resource_signer);
+        let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
-        let random_idx = utils::random_with_nonce(auth_address, 100, uuid) + 1;
+        let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 100, uuid) + 1;
         if(random_idx < percentage) {
             // get egg receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64
-            let random_rarity = utils::random_with_nonce(auth_address, 3, uuid) + 1;
-            let random_eggcount = utils::random_with_nonce(auth_address, 3, uuid) + 1;
+            let random_rarity = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
+            let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
             let i = 0;
             while(i < random_eggcount) {
-                egg_generator::mint_egg(receiver,auth,minter_address,token_name, random_rarity); 
+                egg_generator::mint_egg(receiver,&resource_signer, egg_contract, random_rarity); 
                 i = i + 1;
             }
         };

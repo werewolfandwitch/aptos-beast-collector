@@ -7,6 +7,9 @@ module beast_collector::egg_generator {
     use aptos_token::token::{Self};
     use beast_collector::acl::{Self};    
     use aptos_framework::coin;
+    use std::option::{Self};
+    use aptos_framework::guid;
+    use beast_collector::utils;
     use aptos_framework::event::{Self, EventHandle};    
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
@@ -89,12 +92,12 @@ module beast_collector::egg_generator {
     }        
 
     public fun mint_egg (
-        receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64
+        receiver: &signer, auth: &signer, egg_minter_address:address, egg_type: u64
     ) acquires EggManager {             
         let auth_address = signer::address_of(auth);
-        let manager = borrow_global<EggManager>(minter_address);
+        let manager = borrow_global<EggManager>(egg_minter_address);
         acl::assert_contains(&manager.acl, auth_address);                           
-        let resource_signer = get_resource_account_cap(minter_address);                
+        let resource_signer = get_resource_account_cap(egg_minter_address);                
         let resource_account_address = signer::address_of(&resource_signer);                            
         let mutability_config = &vector<bool>[ false, true, true, true, true ];                
         if(!token::check_collection_exists(resource_account_address, string::utf8(EGG_COLLECTION_NAME))) {
@@ -130,14 +133,14 @@ module beast_collector::egg_generator {
             i = i + 1;
         };
         
-        token_data_id = token::create_tokendata(
+        let token_data_id = token::create_tokendata(
             &resource_signer,
             string::utf8(EGG_COLLECTION_NAME),
             token_name,
             string::utf8(COLLECTION_DESCRIPTION),
             99999,
             uri,
-            minter_address, // royalty fee to                
+            egg_minter_address, // royalty fee to                
             FEE_DENOMINATOR,
             4000,
                 // we don't allow any mutation to the token
