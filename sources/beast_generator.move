@@ -225,6 +225,5 @@ module beast_collector::beast_generator {
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(sender, true);
         token::direct_transfer(&resource_signer, sender, token_id, 1);        
-    }
-       
+    }       
 }
