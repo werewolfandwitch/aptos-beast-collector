@@ -138,7 +138,7 @@ module beast_collector::egg_generator {
             string::utf8(EGG_COLLECTION_NAME),
             token_name,
             string::utf8(COLLECTION_DESCRIPTION),
-            99999,
+            1, // 1 maximum for NFT 
             uri,
             egg_minter_address, // royalty fee to                
             FEE_DENOMINATOR,
