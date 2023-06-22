@@ -4,8 +4,7 @@ module beast_collector::trainer_generator {
     use aptos_framework::timestamp;
     use std::signer;    
     use std::string::{Self, String};    
-    use std::option::{Self};
-    use aptos_std::table::{Self};  
+    use std::option::{Self};    
     use aptos_token::property_map::{Self};
     use aptos_token::token::{Self, TokenId}; 
     use aptos_framework::coin;    

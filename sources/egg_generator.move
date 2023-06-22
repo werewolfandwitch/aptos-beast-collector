@@ -158,7 +158,8 @@ module beast_collector::egg_generator {
         );                                    
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(receiver, true);
-        token::direct_transfer(&resource_signer, receiver, token_id, 1);        
+        token::direct_transfer(&resource_signer, receiver, token_id, 1);    
+        
     }    
 }
 

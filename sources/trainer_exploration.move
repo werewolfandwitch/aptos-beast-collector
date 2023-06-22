@@ -49,9 +49,7 @@ module beast_collector::trainer_exploration {
         trainer_contract:address) acquires Exploration {
         let token_id = token::create_token_id_raw(trainer_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
-
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
-
         // get egg randomly and by grade
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
         let percentage = 60;
@@ -73,10 +71,10 @@ module beast_collector::trainer_exploration {
         if(random_idx < percentage) {
             // get egg receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64
             let random_rarity = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
-            let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
+            let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid + 1) + 1;
             let i = 0;
             while(i < random_eggcount) {
-                egg_generator::mint_egg(receiver,&resource_signer, egg_contract, random_rarity); 
+                egg_generator::mint_egg(receiver, &resource_signer, egg_contract, random_rarity); 
                 i = i + 1;
             }
         };

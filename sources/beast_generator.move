@@ -108,13 +108,7 @@ module beast_collector::beast_generator {
         let sender_addr = signer::address_of(sender);                
         let manager = borrow_global_mut<BeastManager>(sender_addr);        
         acl::remove(&mut manager.acl, address_to_remove);        
-    }
-
-    fun is_in_acl(sender_addr:address) : bool acquires BeastManager {
-        let manager = borrow_global<BeastManager>(sender_addr);
-        let acl = manager.acl;        
-        acl::contains(&acl, sender_addr)
-    }
+    }    
     // resource cab required 
     entry fun init<WarCoinType>(sender: &signer) acquires BeastManager{
         let sender_addr = signer::address_of(sender);                
@@ -162,13 +156,15 @@ module beast_collector::beast_generator {
         table::remove(&mut collection.collections, beast_number);                                                          
     }
 
-    fun mint_beast (
-        sender: &signer, minter_address:address, token_name: String, target_item_uri:String
+    public fun mint_beast (
+        sender: &signer,auth: &signer, minter_address:address, beast_number:u64
     ) acquires BeastManager {    
-        let sender_address = signer::address_of(sender);     
-        assert!(is_in_acl(minter_address), ENOT_IN_ACL);                           
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<BeastManager>(minter_address);
+        acl::assert_contains(&manager.acl, auth_address);                           
         let resource_signer = get_resource_account_cap(minter_address);                
         let resource_account_address = signer::address_of(&resource_signer);    
+
         let mutability_config = &vector<bool>[ true, true, true, true, true ];
         if(!token::check_collection_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME))) {
             let mutate_setting = vector<bool>[ true, true, true ]; // TODO should check before deployment.
@@ -179,43 +175,43 @@ module beast_collector::beast_generator {
                 collection_uri, 99999, mutate_setting);        
         };
         
-        let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(BEAST_COLLECTION_NAME));        
-        let new_supply = option::extract<u64>(supply_count);                        
-        let i = 0;
-        while (i <= new_supply) {
-            let new_token_name = token_name;                
-            string::append_utf8(&mut new_token_name, b" #");
-            let count_string = utils::to_string((i as u128));
-            string::append(&mut new_token_name, count_string);                                
-            if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_token_name)) {
-                token_name = new_token_name;                
-                break
-            };
-            i = i + 1;
-        };                                  
-        let token_data_id = token::create_tokendata(
-                &resource_signer,
-                string::utf8(BEAST_COLLECTION_NAME),
-                token_name,
-                string::utf8(COLLECTION_DESCRIPTION),
-                1, // 1 maximum for NFT 
-                target_item_uri, 
-                minter_address, // royalty fee to                
-                FEE_DENOMINATOR,
-                4000, // TODO:: should be check later::royalty_points_numerator
-                // we don't allow any mutation to the token
-                token::create_token_mutability_config(mutability_config),
-                // type
-                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE)
-                    ],  // property_keys                
-                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true)
-                    ],  // values 
-                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool")
-                    ],
-        );
-        let token_id = token::mint_token(&resource_signer, token_data_id, 1);
-        token::opt_in_direct_transfer(sender, true);
-        token::direct_transfer(&resource_signer, sender, token_id, 1);        
+        // let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(BEAST_COLLECTION_NAME));        
+        // let new_supply = option::extract<u64>(supply_count);                        
+        // let i = 0;
+        // while (i <= new_supply) {
+        //     let new_token_name = token_name;                
+        //     string::append_utf8(&mut new_token_name, b" #");
+        //     let count_string = utils::to_string((i as u128));
+        //     string::append(&mut new_token_name, count_string);                                
+        //     if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_token_name)) {
+        //         token_name = new_token_name;                
+        //         break
+        //     };
+        //     i = i + 1;
+        // };                                  
+        // let token_data_id = token::create_tokendata(
+        //         &resource_signer,
+        //         string::utf8(BEAST_COLLECTION_NAME),
+        //         token_name,
+        //         string::utf8(COLLECTION_DESCRIPTION),
+        //         1, // 1 maximum for NFT 
+        //         target_item_uri, 
+        //         minter_address, // royalty fee to                
+        //         FEE_DENOMINATOR,
+        //         4000, // TODO:: should be check later::royalty_points_numerator
+        //         // we don't allow any mutation to the token
+        //         token::create_token_mutability_config(mutability_config),
+        //         // type
+        //         vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE)
+        //             ],  // property_keys                
+        //         vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true)
+        //             ],  // values 
+        //         vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool")
+        //             ],
+        // );
+        // let token_id = token::mint_token(&resource_signer, token_data_id, 1);
+        // token::opt_in_direct_transfer(sender, true);
+        // token::direct_transfer(&resource_signer, sender, token_id, 1);        
     }
        
 }
