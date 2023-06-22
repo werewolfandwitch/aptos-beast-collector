@@ -3,6 +3,7 @@ module beast_collector::trainer_exploration {
     
     use beast_collector::utils;
     use beast_collector::trainer_generator;
+    use beast_collector::egg_generator;
     use std::signer;    
     use aptos_token::token::{Self, TokenId}; 
     use std::string::{Self, String};    
@@ -44,8 +45,38 @@ module beast_collector::trainer_exploration {
         let token_id = token::create_token_id_raw(trainer_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exp_address);
 
-        // get egg                                
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
+
+        // get egg randomly and by grade
+        let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
+        let percentage = 60;
+        // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
+        if(grade == 1) {
+            percentage = 65;
+        } else if (grade == 2) {
+            percentage = 70;
+        } else if (grade == 3) {
+            percentage = 75;
+        } else if (grade == 4) {
+            percentage = 80;
+        } else {
+            percentage = 85;
+        };
+        let guid = account::create_guid(&resource_signer);
+        let uuid = guid::creation_num(&guid);        
+        let random_idx = utils::random_with_nonce(auth_address, 100, uuid) + 1;
+        if(random_idx < percentage) {
+            // get egg receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64
+            let random_rarity = utils::random_with_nonce(auth_address, 3, uuid) + 1;
+            let random_eggcount = utils::random_with_nonce(auth_address, 3, uuid) + 1;
+            let i = 0;
+            while(i < random_eggcount) {
+                egg_generator::mint_egg(receiver,auth,minter_address,token_name, random_rarity); 
+                i = i + 1;
+            }
+        };
+        
+        // check expor time                      
         let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
 
         // extend time

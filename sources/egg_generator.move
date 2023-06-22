@@ -20,7 +20,7 @@ module beast_collector::egg_generator {
 
     // collection name / info
     const EGG_COLLECTION_NAME:vector<u8> = b"W&W EGG";
-    const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector https://beast.werewolfandwitch.xyz/";
+    const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector game https://beast.werewolfandwitch.xyz/";
     
     const PROPERTY_RARITY: vector<u8> = b"W_RARITY"; // (Common(1) / Rare(2) / Epic (3))
 
@@ -112,43 +112,50 @@ module beast_collector::egg_generator {
         } else {
             string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/egg/egg_epic.png")
         };        
-        let token_data_id;
-        if(!token::check_tokendata_exists(resource_account_address, string::utf8(EGG_COLLECTION_NAME), token_name)) {
-            token_data_id = token::create_tokendata(
-                &resource_signer,
-                string::utf8(EGG_COLLECTION_NAME),
-                token_name,
-                string::utf8(COLLECTION_DESCRIPTION),
-                99999,
-                uri,
-                minter_address, // royalty fee to                
-                FEE_DENOMINATOR,
-                4000,
+        
+
+        let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(EGG_COLLECTION_NAME));        
+        let new_supply = option::extract<u64>(supply_count);                        
+        let i = 0;
+        let token_name = string::utf8(EGG_COLLECTION_NAME);
+        while (i <= new_supply) {
+            let new_token_name = string::utf8(EGG_COLLECTION_NAME);
+            string::append_utf8(&mut new_token_name, b" #");
+            let count_string = utils::to_string((i as u128));
+            string::append(&mut new_token_name, count_string);                                
+            if(!token::check_tokendata_exists(resource_account_address, string::utf8(EGG_COLLECTION_NAME), new_token_name)) {
+                token_name = new_token_name;                
+                break
+            };
+            i = i + 1;
+        };
+        
+        token_data_id = token::create_tokendata(
+            &resource_signer,
+            string::utf8(EGG_COLLECTION_NAME),
+            token_name,
+            string::utf8(COLLECTION_DESCRIPTION),
+            99999,
+            uri,
+            minter_address, // royalty fee to                
+            FEE_DENOMINATOR,
+            4000,
                 // we don't allow any mutation to the token
-                token::create_token_mutability_config(mutability_config),
+            token::create_token_mutability_config(mutability_config),
                 // type
-                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE), 
+            vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE), 
                     string::utf8(PROPERTY_RARITY), 
                     ],  // property_keys                
-                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true),
+            vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true),
                     bcs::to_bytes<u64>(&egg_type),                    
                     ],  // values 
-                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool"),
-                    string::utf8(b"u64"),
-                    ],
-            );            
-        } else {
-            token_data_id = token::create_token_data_id(resource_account_address, string::utf8(EGG_COLLECTION_NAME), token_name);                    
-        };                     
+            vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool"),
+                string::utf8(b"u64"),
+            ],
+        );                                    
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(receiver, true);
         token::direct_transfer(&resource_signer, receiver, token_id, 1);        
-    }
-    // burn and generate new egg
-    // public fun breeding (
-    //     receiver: &signer,
-    //     auth: &signer,
-    // ) acquires EggManager {                     
-    // }    
+    }    
 }
 
