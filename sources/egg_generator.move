@@ -6,7 +6,7 @@ module beast_collector::egg_generator {
     use aptos_framework::account;    
     use aptos_token::token::{Self};
     use beast_collector::acl::{Self};    
-    use aptos_framework::coin;
+    use aptos_framework::coin;        
     use std::option::{Self};
     use aptos_framework::guid;
     use beast_collector::utils;
@@ -157,8 +157,8 @@ module beast_collector::egg_generator {
         );                                    
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(receiver, true);
-        token::direct_transfer(&resource_signer, receiver, token_id, 1);    
-        
-    }    
+        token::direct_transfer(&resource_signer, receiver, token_id, 1);
+    }
+    
 }
 

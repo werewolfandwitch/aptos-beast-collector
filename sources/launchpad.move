@@ -2,14 +2,14 @@
 module beast_collector::launchpad {
     
     use std::signer;    
-    use aptos_framework::timestamp;
     use std::error;
+    use aptos_framework::timestamp;    
     use aptos_framework::coin::{Self};
     use aptos_framework::event::{Self, EventHandle};        
     use aptos_framework::account;    
-    use beast_collector::utils;
-    use beast_collector::trainer_generator;
     use aptos_framework::guid;
+    use beast_collector::utils;
+    use beast_collector::trainer_generator;    
 
     const MAX_AMOUNT:u64 = 1000;
     const APT_PRICE:u64 = 50000000;
@@ -19,6 +19,7 @@ module beast_collector::launchpad {
     const ENOT_OPENED: u64 = 1; 
     const EMAX_AMOUNT: u64 = 2;   
     const ENO_SUFFICIENT_FUND: u64 = 3;
+    
 
     struct LaunchPad has store, key {          
         signer_cap: account::SignerCapability,
@@ -69,7 +70,7 @@ module beast_collector::launchpad {
 
     entry fun mint_trainer<CoinType>(receiver: &signer, launchpad_address:address, trainer_generator:address) acquires LaunchPad {        
         let receiver_addr = signer::address_of(receiver);
-        let resource_signer = get_resource_account_cap(launchpad_address);                        
+        let resource_signer = get_resource_account_cap(launchpad_address);
         // check war coin or aptos        
         let coin_address = utils::coin_address<CoinType>();
         assert!(coin_address == @war_coin || coin_address == @aptos_coin, error::permission_denied(ENOT_AUTHORIZED));

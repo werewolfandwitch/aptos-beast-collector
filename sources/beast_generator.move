@@ -151,12 +151,7 @@ module beast_collector::beast_generator {
             stage_name_3,
             stage_uri_3,
             story: story
-        });        
-        // event::emit_event(&mut recieps.recipe_add_events, CollectionAdded { 
-        //     material_1: material_token_name_1,        
-        //     material_2: material_token_name_2,
-        //     item: item_token_name,            
-        // });        
+        });
     }
 
      entry fun remove_collection (

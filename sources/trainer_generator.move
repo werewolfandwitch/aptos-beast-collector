@@ -24,7 +24,7 @@ module beast_collector::trainer_generator {
     
     // collection name / info
     const TRAINER_COLLECTION_NAME:vector<u8> = b"W&W Beast Collector";
-    const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector https://beast.werewolfandwitch.xyz/";
+    const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and Witch beast collector https://beast.werewolfandwitch.xyz/";
     // item property
     
     const PROPERTY_EXP: vector<u8> = b"W_EXP"; // 100 MAX, 100 EXP => 1 LEVEL UP
