@@ -56,14 +56,17 @@ module beast_collector::beast_exploration {
         coin::deposit(sender_addr, coins);
     }
 
-    entry fun init(sender: &signer) {
+    entry fun init<WarCoinType>(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
-        let (_resource_signer, signer_cap) = account::create_resource_account(sender, x"09");
+        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"09");
         if(!exists<Exploration>(sender_addr)){            
             move_to(sender, Exploration {                
                 signer_cap,
                 jackpot_events: account::new_event_handle<JackpotEvent>(sender),                
             });
+        };
+        if(!coin::is_account_registered<WarCoinType>(signer::address_of(&resource_signer))){
+            coin::register<WarCoinType>(&resource_signer);
         };
     }   
 
