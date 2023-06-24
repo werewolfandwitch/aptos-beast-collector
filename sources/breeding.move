@@ -13,10 +13,11 @@ module beast_collector::breeding {
     const APT_PRICE:u64 = 50000000;
     const WAR_PRICE:u64 = 50000000000;    
 
-    const ENOT_AUTHORIZED:u64 = 0;
-    const ENOT_OPENED: u64 = 1; 
-    const EMAX_AMOUNT: u64 = 2;   
-    const ENO_SUFFICIENT_FUND: u64 = 3;
+    const ENOT_AUTHORIZED:u64 = 0;        
+
+    const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";    
+
+    const BEAST_BREEDING_TIME: vector<u8> = b"W_BREEDING";
 
     struct Breeding has store, key {          
         signer_cap: account::SignerCapability,                
@@ -44,8 +45,21 @@ module beast_collector::breeding {
         };
         
     } 
-    // TODO 
-    entry fun breeding() {
-
+    
+    entry fun breeding(
+        holder: &signer, 
+        token_name_1:String, property_version_1:u64,
+        token_name_2:String, property_version_2:u64
+    ) {
+        let token_id_1 = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name_1, property_version_1);        
+        let token_id_2 = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name_2, property_version_2);        
+        let pm = token::get_property_map(signer::address_of(holder), token_id_1);        
+        let p2 = token::get_property_map(signer::address_of(holder), token_id_2);        
+        let breed_expired_time_1 = property_map::read_u64(&pm, &string::utf8(BEAST_BREEDING_TIME));
+        let breed_expired_time_2 = property_map::read_u64(&pm2, &string::utf8(BEAST_BREEDING_TIME));
+        let now_seconds = timestamp::now_seconds();
+        assert!(breed_expired_time_1 < now_seconds, error::permission_denied(ENOT_AUTHORIZED));
+        assert!(breed_expired_time_2 < now_seconds, error::permission_denied(ENOT_AUTHORIZED));
+        // burn two token and make new pet with under level
     }
 }

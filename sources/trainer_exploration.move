@@ -46,8 +46,7 @@ module beast_collector::trainer_exploration {
         trainer_contract:address) acquires Exploration {
         let token_id = token::create_token_id_raw(trainer_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
-        let pm = token::get_property_map(signer::address_of(receiver), token_id);
-        // get egg randomly and by grade
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);        
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
         assert!(grade < 6 && grade > 0, error::permission_denied(ENOT_AUTHORIZED));
         // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
@@ -77,8 +76,7 @@ module beast_collector::trainer_exploration {
                 i = i + 1;
             }
         };
-        
-        // TODO check expor time                      
+                
         let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
         assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
@@ -94,8 +92,7 @@ module beast_collector::trainer_exploration {
         let resource_signer = get_resource_account_cap(exporation_address);
 
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
-
-        // get egg randomly and by grade
+        
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
         assert!(grade > 2 && grade < 6, error::permission_denied(ENOT_AUTHORIZED));
         let percentage = if(grade == 1) {
