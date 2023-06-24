@@ -60,21 +60,21 @@ module beast_collector::beast_exploration {
         };
     }   
 
-    entry fun beast_exploration(receiver: &signer, 
-        beast_token_name: String, beast_token_creator:address, property_version:u64, exporation_address:address,
+    entry fun beast_exploration(
+        receiver: &signer, beast_token_name: String, beast_token_creator:address, property_version:u64, exporation_address:address,
         ) acquires Exploration {
         let token_id = token::create_token_id_raw(@beast_creator,string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
-        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        // let pm = token::get_property_map(signer::address_of(receiver), token_id);
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
-        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;                    
-        beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address,token_id, random_exp);                
+        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;                            
 
         // TODO change it before deployment
-        let pm = token::get_property_map(signer::address_of(receiver), token_id);        
-        let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));
+        // let pm = token::get_property_map(signer::address_of(receiver), token_id);        
+        // let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));
         // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
+        beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address, token_id, random_exp);
     }
 
     entry fun beast_exploration_2<WarCoinType>(
@@ -107,7 +107,7 @@ module beast_collector::beast_exploration {
             coin::deposit(signer::address_of(receiver), coins);
         };
         // TODO change it before deployment
-        let pm = token::get_property_map(signer::address_of(receiver), token_id);        
+
         let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));
         
         // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
