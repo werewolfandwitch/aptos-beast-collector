@@ -69,7 +69,7 @@ module beast_collector::beast_exploration {
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;                    
-        beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address,token_id, random_exp);                
+        beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address, token_id, random_exp);                
 
         // TODO change it before deployment
         let pm = token::get_property_map(signer::address_of(receiver), token_id);        
