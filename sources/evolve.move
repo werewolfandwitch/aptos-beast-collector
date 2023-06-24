@@ -27,7 +27,7 @@ module beast_collector::evolve {
 
     entry fun init(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"08");        
+        let (_resource_signer, signer_cap) = account::create_resource_account(sender, x"08");        
         if(!exists<Evolve>(sender_addr)){            
             move_to(sender, Evolve {                
                 signer_cap,                

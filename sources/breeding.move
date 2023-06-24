@@ -6,7 +6,7 @@ module beast_collector::breeding {
     use std::string::{Self, String}; 
     use aptos_framework::timestamp;    
     use aptos_framework::coin::{Self};       
-    use aptos_framework::event::{Self, EventHandle};        
+    use aptos_framework::event::{Self};        
     use aptos_token::property_map::{Self};
     use aptos_token::token::{Self}; 
     use aptos_framework::account;    
@@ -38,7 +38,7 @@ module beast_collector::breeding {
         account::create_signer_with_capability(&launchpad.signer_cap)
     }
 
-    entry fun init(sender: &signer, launchpad_public_open:u64) {
+    entry fun init(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
         let (resource_signer, signer_cap) = account::create_resource_account(sender, x"07");        
         if(!exists<Breeding>(sender_addr)){            
@@ -67,9 +67,9 @@ module beast_collector::breeding {
         let rarity_2 = property_map::read_u64(&pm2, &string::utf8(BEAST_RARITY));
         let small_rarity = if(rarity_1 > rarity_2) { rarity_2 } else { rarity_1 };
         if (small_rarity < 5) {
-            egg_generator::mint_egg (holder, &resource_signer, @egg_gen_address, 1);
+            egg_generator::mint_egg(holder, &resource_signer, @egg_gen_address, 1);
         } else {
-            egg_generator::mint_egg (holder, &resource_signer, @egg_gen_address, 2);
+            egg_generator::mint_egg(holder, &resource_signer, @egg_gen_address, 2);
         };
         let now_seconds = timestamp::now_seconds();
         assert!(breed_expired_time_1 < now_seconds, error::permission_denied(ENOT_AUTHORIZED));

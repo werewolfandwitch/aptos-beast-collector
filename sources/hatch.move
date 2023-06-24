@@ -8,11 +8,10 @@ module beast_collector::hatch {
     use aptos_framework::account;    
     use aptos_framework::guid;
     use std::string::{Self, String};    
-    use aptos_token::token::{Self, TokenId};     
+    use aptos_token::token::{Self};     
     use aptos_token::property_map::{Self};    
 
-    use beast_collector::utils;
-    use beast_collector::trainer_generator;    
+    use beast_collector::utils;    
     use beast_collector::beast_generator;
 
     const ENOT_AUTHORIZED:u64 = 0;    
@@ -39,7 +38,7 @@ module beast_collector::hatch {
 
     entry fun init(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"06");        
+        let (_resource_signer, signer_cap) = account::create_resource_account(sender, x"06");        
         if(!exists<Hatch>(sender_addr)){            
             move_to(sender, Hatch {                
                 signer_cap,                
