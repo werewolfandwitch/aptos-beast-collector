@@ -10,8 +10,8 @@ AptosToken = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="apt
 [addresses]
 beast_collector ="_"
 war_coin="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a"
-egg_creator="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a"
-beast_gen_address="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a"
+egg_creator="0xc2cd5b22336f551dc7673f1911f53626cdd17fdf37d6dc23a953b0acec1ce271"
+beast_gen_address="0x77c76e82446e2478cabb6753f60ce34c010fa1d98a0d985fefda643443293b48"
 aptos_coin="0x1"
 aptos_framework="0x1"
 aptos_std="0x1"
