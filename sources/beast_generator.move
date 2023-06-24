@@ -26,7 +26,7 @@ module beast_collector::beast_generator {
     const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";    
     const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector https://beast.werewolfandwitch.xyz/";
     // item property
-    const BEAST_NUMBER: vector<u8> = b"W_EXP";
+    const BEAST_NUMBER: vector<u8> = b"W_NUMBER";
     const BEAST_EXP: vector<u8> = b"W_EXP";
     const BEAST_LEVEL: vector<u8> = b"W_LEVEL";
     const BEAST_RARITY: vector<u8> = b"W_RARITY"; // very common(1),Common(2), Rare(3), Very Rare(4), Epic (5), Legendary(6), Mythic(7)
