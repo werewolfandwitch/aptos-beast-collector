@@ -83,7 +83,7 @@ module beast_collector::beast_exploration {
         let token_id = token::create_token_id_raw(@beast_creator,string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         let evo_stage = property_map::read_u64(&pm, &string::utf8(BEAST_EVO_STAGE));
-        assert!(evo_stage > 1, error::permission_denied(EREQUIRED_EVOLUTION));
+        assert!(evo_stage > 2, error::permission_denied(EREQUIRED_EVOLUTION));
         let resource_signer = get_resource_account_cap(exporation_address);
         let coin_address = utils::coin_address<WarCoinType>();
         assert!(coin_address == @war_coin, error::permission_denied(ENOT_AUTHORIZED));
