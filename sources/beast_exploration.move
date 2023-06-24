@@ -59,17 +59,23 @@ module beast_collector::beast_exploration {
         };
     }   
 
-    entry fun beast_exploration(
+    entry fun beast_exploration<WarCoinType>(
         receiver: &signer, beast_token_name: String, _beast_token_creator:address, property_version:u64, exporation_address:address,
         ) acquires Exploration {
+        if(!coin::is_account_registered<WarCoinType>(signer::address_of(receiver))){
+            coin::register<WarCoinType>(receiver);
+        };
         let token_id = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
-        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;                            
-        // TODO change it before deployment        
-        let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));
+        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;                                     
+        let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));        
+        let earned = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
+        let coins = coin::withdraw<WarCoinType>(&resource_signer, earned * 100000000);                
+        coin::deposit(signer::address_of(receiver), coins);        
+
         assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
         beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address, token_id, random_exp);
     }
@@ -78,10 +84,11 @@ module beast_collector::beast_exploration {
         receiver: &signer, 
         beast_token_name:String, _beast_token_creator:address, property_version:u64, 
         exporation_address:address) acquires Exploration {
+            
         let token_id = token::create_token_id_raw(@beast_creator,string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         let evo_stage = property_map::read_u64(&pm, &string::utf8(BEAST_EVO_STAGE));
-        assert!(evo_stage > 2, error::permission_denied(EREQUIRED_EVOLUTION));
+        assert!(evo_stage > 1, error::permission_denied(EREQUIRED_EVOLUTION));
         let resource_signer = get_resource_account_cap(exporation_address);
         let coin_address = utils::coin_address<WarCoinType>();
         assert!(coin_address == @war_coin, error::permission_denied(ENOT_AUTHORIZED));
@@ -100,9 +107,9 @@ module beast_collector::beast_exploration {
         coin::deposit(signer::address_of(receiver), coins);
         
         // jackpot number = 777
-        let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 100, uuid) + 1;
+        let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 1000, uuid) + 1;
         if(random_idx == 777) {
-            let coins = coin::withdraw<WarCoinType>(&resource_signer, 1000 * price_to_pay);                
+            let coins = coin::withdraw<WarCoinType>(&resource_signer, 100 * price_to_pay);                
             coin::deposit(signer::address_of(receiver), coins);
         };        
 
