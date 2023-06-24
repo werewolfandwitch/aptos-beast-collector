@@ -24,7 +24,7 @@ module beast_collector::beast_generator {
     
     // collection name / info
     const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";    
-    const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector https://beast.werewolfandwitch.xyz/";
+    const COLLECTION_DESCRIPTION:vector<u8> = b"The Beasts inhabit pristine and crystalline forests, their home a sanctuary of tranquility. Within these ethereal woods, a myriad of species thrives, each possessing its own unique traits and abilities. As the Beasts grow and mature, they undergo magnificent evolutions, unlocking even greater power and the ability to wield formidable magic. https://beast.werewolfandwitch.xyz/";
     // item property
     const BEAST_NUMBER: vector<u8> = b"W_NUMBER";
     const BEAST_EXP: vector<u8> = b"W_EXP";
