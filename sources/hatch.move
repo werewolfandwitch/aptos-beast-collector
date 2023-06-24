@@ -132,19 +132,19 @@ module beast_collector::hatch {
         let uuid = guid::creation_num(&guid);        
         let random_idx = utils::random_with_nonce(resource_account_address, 1000, uuid) + 1;
         if(random_idx <= 350) {            
-            get_range_very_common(hatch_address);
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_very_common(hatch_address));
         } else if (random_idx > 350 && random_idx <= 590) {            
-            get_range_common(hatch_address);
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_common(hatch_address));
         } else if (random_idx > 590 && random_idx <= 810) {
-            get_range_rare(hatch_address);
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_rare(hatch_address));
         } else if (random_idx > 810 && random_idx <= 930) {
-            get_range_very_rare(hatch_address);
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_very_rare(hatch_address));
         } else if (random_idx > 930 && random_idx <= 970) {
-            get_range_epic(hatch_address);
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_epic(hatch_address));
         } else if (random_idx > 970 && random_idx < 990) {
-            get_range_legendary(hatch_address);
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_legendary(hatch_address));
         } else {
-            get_range_mythic(hatch_address);            
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_mythic(hatch_address));
         }
     }
 

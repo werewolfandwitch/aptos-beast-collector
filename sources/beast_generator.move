@@ -191,7 +191,6 @@ module beast_collector::beast_generator {
         let token_uri = evolution_struct.stage_uri_1;
         let rarity = evolution_struct.rarity;
         let story = evolution_struct.story;
-
         let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/beast/1.png");
         let token_data_id;
         if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), token_name)) {
@@ -200,7 +199,7 @@ module beast_collector::beast_generator {
                 string::utf8(BEAST_COLLECTION_NAME),
                 token_name,
                 story,
-                99999, 
+                999999, 
                 token_uri,
                 minter_address, // royalty fee to                
                 FEE_DENOMINATOR,
