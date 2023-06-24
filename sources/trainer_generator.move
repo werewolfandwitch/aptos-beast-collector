@@ -22,7 +22,7 @@ module beast_collector::trainer_generator {
     
     // collection name / info
     const TRAINER_COLLECTION_NAME:vector<u8> = b"W&W Beast Collector";
-    const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and Witch beast collector https://beast.werewolfandwitch.xyz/";
+    const COLLECTION_DESCRIPTION:vector<u8> = b"Beast Collector takes on the mission of protecting rare Beasts that are vanishing amidst the war between werewolves and witches. They embark on daring expeditions to gather eggs and train the Beasts to help them thrive. Through the unique abilities of the Beast Collectors, these extraordinary creatures can undergo remarkable evolutions. https://beast.werewolfandwitch.xyz/";
     // item property
     
     const PROPERTY_EXP: vector<u8> = b"W_EXP"; // 100 MAX, 100 EXP => 1 LEVEL UP
