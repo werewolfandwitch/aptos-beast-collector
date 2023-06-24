@@ -60,13 +60,15 @@ module beast_collector::hatch {
         token::burn(receiver, egg_creator, string::utf8(EGG_COLLECTION_NAME), egg_token_name, property_version, 1);                                
         if(egg_rarity == 1) {
             // mint_egg_common
-            mint_egg_common(receiver, &resource_signer, hatch_address);            
+            mint_egg_common(receiver, &resource_signer, hatch_address);
         } else if(egg_rarity == 2){
             // mint_egg_rare
             mint_egg_rare(receiver, &resource_signer, hatch_address);
-        } else {
+        } else if(egg_rarity == 3){
             // mint_egg_epic
             mint_egg_epic(receiver, &resource_signer, hatch_address);
+        } else {
+            mint_egg_common(receiver, &resource_signer, hatch_address);
         }
     }
 

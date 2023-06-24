@@ -26,6 +26,7 @@ module beast_collector::beast_generator {
     const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";    
     const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector https://beast.werewolfandwitch.xyz/";
     // item property
+    const BEAST_NUMBER: vector<u8> = b"W_EXP";
     const BEAST_EXP: vector<u8> = b"W_EXP";
     const BEAST_LEVEL: vector<u8> = b"W_LEVEL";
     const BEAST_RARITY: vector<u8> = b"W_RARITY"; // very common(1),Common(2), Rare(3), Very Rare(4), Epic (5), Legendary(6), Mythic(7)
@@ -208,6 +209,7 @@ module beast_collector::beast_generator {
                 token::create_token_mutability_config(mutability_config),
                 // type
                 vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE),
+                    string::utf8(BEAST_NUMBER),
                     string::utf8(BEAST_EXP),
                     string::utf8(BEAST_LEVEL),
                     string::utf8(BEAST_RARITY),
@@ -217,6 +219,7 @@ module beast_collector::beast_generator {
                     string::utf8(BEAST_EVOLUTION_TIME)
                 ],  // property_keys                
                 vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&false),
+                    bcs::to_bytes<u64>(&beast_number),
                     bcs::to_bytes<u64>(&0),
                     bcs::to_bytes<u64>(&1),
                     bcs::to_bytes<u64>(&rarity),
@@ -226,6 +229,7 @@ module beast_collector::beast_generator {
                     bcs::to_bytes<u64>(&timestamp::now_seconds()),
                 ],  // values 
                 vector<String>[string::utf8(b"bool"),string::utf8(b"bool"),
+                    string::utf8(b"u64"),
                     string::utf8(b"u64"),
                     string::utf8(b"u64"),
                     string::utf8(b"u64"),
@@ -301,6 +305,38 @@ module beast_collector::beast_generator {
                     string::utf8(b"u64")
                 ],      // type
             );     
+    }
+
+    public fun evolve (
+        receiver: &signer, auth: &signer, beast_contract_address:address, token_id: TokenId,
+    ) acquires BeastCollection, BeastManager {
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<BeastManager>(beast_contract_address);
+        acl::assert_contains(&manager.acl, auth_address);
+        let collection = borrow_global_mut<BeastCollection>(beast_contract_address);        
+        let resource_signer = get_resource_account_cap(beast_contract_address);                               
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);        
+        let evo_stage = property_map::read_u64(&pm, &string::utf8(BEAST_EVO_STAGE));        
+        let beast_number = property_map::read_u64(&pm, &string::utf8(BEAST_NUMBER));        
+        let evolution_struct = table::borrow(&collection.collections, beast_number);
+        evo_stage = evo_stage + 1;
+        let new_name = evolution_struct.stage_name_2;
+        let new_name = evolution_struct.stage_uri_2;        
+        token::mutate_one_token(            
+                &resource_signer,
+                signer::address_of(receiver),
+                token_id,            
+                vector<String>[                    
+                    string::utf8(BEAST_EVO_STAGE),                                        
+                ],  // property_keys                
+                vector<vector<u8>>[
+                    bcs::to_bytes<u64>(&evo_stage),                    
+                ],  // values 
+                vector<String>[
+                    string::utf8(b"u64"),                    
+                ],  // type
+            ); 
+
     }
               
 }

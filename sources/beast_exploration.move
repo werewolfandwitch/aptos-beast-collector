@@ -77,15 +77,16 @@ module beast_collector::beast_exploration {
         // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
     }
 
-    entry fun beast_exploration_2<WarCoinType>(receiver: &signer, 
-        beast_token_name:String, beast_token_creator:address, property_version:u64, exporation_address:address) acquires Exploration {
+    entry fun beast_exploration_2<WarCoinType>(
+        receiver: &signer, 
+        beast_token_name:String, beast_token_creator:address, property_version:u64, 
+        exporation_address:address) acquires Exploration {
         let resource_signer = get_resource_account_cap(exporation_address);
         let coin_address = utils::coin_address<WarCoinType>();
         assert!(coin_address == @war_coin, error::permission_denied(ENOT_AUTHORIZED));
         let price_to_pay = 100000000; // 1 WAR Coin
         let coins_to_pay = coin::withdraw<WarCoinType>(receiver, price_to_pay);                
         coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
-        
 
         let token_id = token::create_token_id_raw(beast_token_creator,string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
