@@ -57,6 +57,7 @@ module beast_collector::hatch {
         let egg_rarity = property_map::read_u64(&pm, &string::utf8(PROPERTY_RARITY));
         assert!(egg_rarity > 0 && egg_rarity <= 3, error::permission_denied(ENOT_AUTHORIZED));        
         // burn and mint
+        token::burn(receiver, egg_creator, string::utf8(EGG_COLLECTION_NAME), egg_token_name, property_version, 1);                                
         if(egg_rarity == 1) {
             // mint_egg_common
             mint_egg_common(receiver, &resource_signer, hatch_address);            
@@ -89,8 +90,10 @@ module beast_collector::hatch {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_epic(hatch_address));
         } else if (random_idx > 988 && random_idx < 995) {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_legendary(hatch_address));
-        } else {
+        } else if (random_idx > 995 && random_idx <= 1000) {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_mythic(hatch_address));
+        } else {
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_very_common(hatch_address));       
         }
         
 
@@ -113,12 +116,13 @@ module beast_collector::hatch {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_very_rare(hatch_address));
         } else if (random_idx > 958 && random_idx <= 978) {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_epic(hatch_address));
-        } else if (random_idx > 978 && random_idx < 993) {
+        } else if (random_idx > 978 && random_idx <= 993) {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_legendary(hatch_address));
-        } else {
+        } else if (random_idx > 993 && random_idx <= 1000) {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_mythic(hatch_address));
+        } else {
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_very_common(hatch_address));
         }
-
     }
 
     fun mint_egg_epic (receiver: &signer, auth: &signer, hatch_address:address) acquires Hatch {           
@@ -138,10 +142,12 @@ module beast_collector::hatch {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_very_rare(hatch_address));
         } else if (random_idx > 930 && random_idx <= 970) {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_epic(hatch_address));
-        } else if (random_idx > 970 && random_idx < 990) {
+        } else if (random_idx > 970 && random_idx <= 990) {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_legendary(hatch_address));
-        } else {
+        } else if (random_idx > 990 && random_idx <= 1000) {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_mythic(hatch_address));
+        } else {
+            beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_very_common(hatch_address));
         }
     }
 
