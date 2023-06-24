@@ -70,6 +70,7 @@ module beast_collector::beast_generator {
 
     struct MintedEvent has drop, store {
         minted_item: token::TokenId,
+        owner: address,
         generated_time: u64
     }
 
@@ -240,6 +241,12 @@ module beast_collector::beast_generator {
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(sender, true);
         token::direct_transfer(&resource_signer, sender, token_id, 1);        
+        let game_events = borrow_global_mut<BeastManager>(beast_contract_address);               
+        event::emit_event(&mut game_events.token_minting_events, MintedEvent {            
+            minted_item: token_id,
+            owner: signer::address_of(sender),
+            generated_time: timestamp::now_seconds()
+        });
     }
 
     public fun extend_breeding_time (
@@ -382,6 +389,12 @@ module beast_collector::beast_generator {
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(receiver, true);
         token::direct_transfer(&resource_signer, receiver, token_id, 1); 
+        let game_events = borrow_global_mut<BeastManager>(beast_contract_address);               
+        event::emit_event(&mut game_events.token_minting_events, MintedEvent {            
+            minted_item: token_id,
+            owner: signer::address_of(sender),
+            generated_time: timestamp::now_seconds()
+        });
 
     }
               
