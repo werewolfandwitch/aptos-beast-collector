@@ -3,9 +3,11 @@ module beast_collector::beast_exploration {
     use std::error;
     use aptos_framework::coin::{Self};
     use aptos_framework::timestamp;
+    use aptos_framework::event::{Self, EventHandle};    
     use beast_collector::utils;    
     use beast_collector::beast_generator;    
     use std::signer;    
+    
     use std::string::{Self, String};    
     use aptos_token::token::{Self};     
     use aptos_token::property_map::{Self};    
@@ -27,7 +29,12 @@ module beast_collector::beast_exploration {
 
     struct Exploration has store, key {          
         signer_cap: account::SignerCapability,        
+        jackpot_events: EventHandle<JackpotEvent>,
     }        
+
+    struct JackpotEvent has drop, store {
+        lucky_guy: address,        
+    }
 
     fun get_resource_account_cap(exp_address : address) : signer acquires Exploration {
         let launchpad = borrow_global<Exploration>(exp_address);
@@ -54,7 +61,8 @@ module beast_collector::beast_exploration {
         let (_resource_signer, signer_cap) = account::create_resource_account(sender, x"09");
         if(!exists<Exploration>(sender_addr)){            
             move_to(sender, Exploration {                
-                signer_cap,                
+                signer_cap,
+                jackpot_events: account::new_event_handle<JackpotEvent>(sender),                
             });
         };
     }   
@@ -109,8 +117,12 @@ module beast_collector::beast_exploration {
         // jackpot number = 777
         let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 1000, uuid) + 1;
         if(random_idx == 777) {
-            let coins = coin::withdraw<WarCoinType>(&resource_signer, 100 * price_to_pay);                
+            let coins = coin::withdraw<WarCoinType>(&resource_signer, 1000 * price_to_pay);                
             coin::deposit(signer::address_of(receiver), coins);
+            let game_events = borrow_global_mut<Exploration>(exporation_address);               
+            event::emit_event(&mut game_events.jackpot_events, JackpotEvent {            
+                lucky_guy: signer::address_of(receiver),                
+            });
         };        
 
         let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));        
