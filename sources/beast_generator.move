@@ -32,15 +32,8 @@ module beast_collector::beast_generator {
     const BEAST_EVO_STAGE: vector<u8> = b"W_EVO_STAGE";
     const BEAST_DUNGEON_TIME: vector<u8> = b"W_DUNGEON_TIME";
     const BEAST_BREEDING_TIME: vector<u8> = b"W_BREEDING";
-    const BEAST_EVOLUTION_TIME: vector<u8> = b"W_EVOLUTION";
-  
-    const ENOT_CREATOR:u64 = 1;
-    const ESAME_MATERIAL:u64 = 2;
-    const ENOT_IN_RECIPE:u64 = 3;
-    const ENOT_IN_ACL: u64 = 4;
-    const EIS_TOP_LEVEL:u64 = 5;
-    const ENOT_AUTHORIZED:u64 = 6;
-    const ENO_SUFFICIENT_FUND:u64 = 7;
+    const BEAST_EVOLUTION_TIME: vector<u8> = b"W_EVOLUTION";    
+    
 
     struct BeastCollection has key {
         collections: Table<u64, Evolution>, // <Name of Item, Item Composition>        
@@ -143,18 +136,17 @@ module beast_collector::beast_generator {
         ) acquires BeastCollection, BeastManager {
         let creator_address = signer::address_of(sender);        
         let collections = borrow_global_mut<BeastCollection>(creator_address);
-        let beast_manager = borrow_global_mut<BeastManager>(creator_address);
-        // beast_manager.maximum_beast_count = beast_manager.maximum_beast_count + 1;
-        // table::add(&mut collections.collections, beast_number, Evolution {
-        //     stage_name_1,            
-        //     stage_uri_1,
-        //     stage_name_2, 
-        //     stage_uri_2,
-        //     stage_name_3,
-        //     stage_uri_3,
-        //     rarity,
-        //     story
-        // });
+        let beast_manager = borrow_global_mut<BeastManager>(creator_address);        
+        table::add(&mut collections.collections, beast_number, Evolution {
+            stage_name_1,            
+            stage_uri_1,
+            stage_name_2, 
+            stage_uri_2,
+            stage_name_3,
+            stage_uri_3,
+            rarity,
+            story
+        });
     }
 
      entry fun remove_collection (
@@ -163,8 +155,7 @@ module beast_collector::beast_generator {
         let creator_address = signer::address_of(sender);
         let collection = borrow_global_mut<BeastCollection>(creator_address);
         table::remove(&mut collection.collections, beast_number);                                                          
-        let beast_manager = borrow_global_mut<BeastManager>(creator_address);
-        beast_manager.maximum_beast_count = beast_manager.maximum_beast_count - 1;
+        let beast_manager = borrow_global_mut<BeastManager>(creator_address);        
     }
     
 
@@ -241,5 +232,31 @@ module beast_collector::beast_generator {
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(sender, true);
         token::direct_transfer(&resource_signer, sender, token_id, 1);        
-    }       
+    }
+
+    public fun extend_breeding_time (
+        receiver: &signer, auth: &signer, beast_contract_address:address, token_id: TokenId,
+    ) acquires BeastManager {  
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<BeastManager>(beast_contract_address);
+        acl::assert_contains(&manager.acl, auth_address);                                   
+        let resource_signer = get_resource_account_cap(beast_contract_address);
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        let level = property_map::read_u64(&pm, &string::utf8(BEAST_BREEDING_TIME));                
+        token::mutate_one_token(            
+                &resource_signer,
+                signer::address_of(receiver),
+                token_id,            
+                vector<String>[
+                    string::utf8(BEAST_BREEDING_TIME),                    
+                ],  // property_keys                
+                vector<vector<u8>>[                    
+                    bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400 * 6))
+                ],  // values 
+                vector<String>[
+                    string::utf8(b"u64"),                    
+                ],      // type
+            );             
+    }
+              
 }
