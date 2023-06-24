@@ -318,7 +318,7 @@ module beast_collector::beast_generator {
         let resource_signer = get_resource_account_cap(beast_contract_address);                               
         let resource_account_address = signer::address_of(&resource_signer);    
         let pm = token::get_property_map(signer::address_of(receiver), token_id);        
-        let evo_stage = property_map::read_u64(&pm, &string::utf8(BEAST_EVO_STAGE));        
+        let evo_stage = property_map::read_u64(&pm, &string::utf8(BEAST_EVO_STAGE));                
         let beast_number = property_map::read_u64(&pm, &string::utf8(BEAST_NUMBER));
         let beast_rarity = property_map::read_u64(&pm, &string::utf8(BEAST_RARITY));        
         let evolution_struct = table::borrow(&collection.collections, beast_number);
