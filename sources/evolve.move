@@ -2,8 +2,7 @@
 module beast_collector::evolve {
     
     use std::signer;            
-    use aptos_framework::coin::{Self};
-    use aptos_framework::event::{Self};        
+    use aptos_framework::coin::{Self};    
     use aptos_framework::account;        
 
     const MAX_AMOUNT:u64 = 1000;

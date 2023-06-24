@@ -1,6 +1,7 @@
 
 module beast_collector::trainer_exploration {
     use std::error;
+    use aptos_framework::timestamp;
     use beast_collector::utils;
     use beast_collector::trainer_generator;
     use beast_collector::egg_generator;
@@ -48,6 +49,7 @@ module beast_collector::trainer_exploration {
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         // get egg randomly and by grade
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
+        assert!(grade < 6 && grade > 0, error::permission_denied(ENOT_AUTHORIZED));
         // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
         let percentage = if(grade == 1) {
             65
@@ -78,7 +80,7 @@ module beast_collector::trainer_exploration {
         
         // TODO check expor time                      
         let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
-        // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
+        assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
         // extend time
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
@@ -96,18 +98,18 @@ module beast_collector::trainer_exploration {
         // get egg randomly and by grade
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
         assert!(grade > 2, error::permission_denied(ENOT_AUTHORIZED));
-        let percentage = 60;
-        // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
-        if(grade == 1) {
-            percentage = 65;
+        let percentage = if(grade == 1) {
+            65
         } else if (grade == 2) {
-            percentage = 70;
+            70
         } else if (grade == 3) {
-            percentage = 75;
+            75
         } else if (grade == 4) {
-            percentage = 80;
+            80
+        } else if (grade == 5) {
+            85
         } else {
-            percentage = 85;
+            30
         };
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
@@ -122,10 +124,9 @@ module beast_collector::trainer_exploration {
                 i = i + 1;
             }
         };
-        
-        // TODO check expor time                      
+                
         let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
-        // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
+        assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
         // extend time and add exp
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;

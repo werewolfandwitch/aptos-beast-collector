@@ -4,7 +4,7 @@ module beast_collector::hatch {
     use std::signer;    
     use std::error;    
     use aptos_framework::coin::{Self};    
-    use aptos_framework::event::{Self, EventHandle};        
+    use aptos_framework::event::{Self};        
     use aptos_framework::account;    
     use aptos_framework::guid;
     use std::string::{Self, String};    
