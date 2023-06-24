@@ -20,7 +20,6 @@ module beast_collector::beast_generator {
     const TOKEN_PROPERTY_MUTABLE: vector<u8> = b"TOKEN_PROPERTY_MUTATBLE";    
 
     const FEE_DENOMINATOR: u64 = 100000;
-    const WAR_COIN_DECIMAL:u64 = 100000000;   
     
     // collection name / info
     const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";    
@@ -118,6 +117,11 @@ module beast_collector::beast_generator {
             });
         };
         
+        if(!exists<BeastCollection>(sender_addr)){
+            move_to(sender, BeastCollection {
+                collections: table::new(),                
+            });
+        };
 
         if(!coin::is_account_registered<WarCoinType>(signer::address_of(&resource_signer))){
             coin::register<WarCoinType>(&resource_signer);
@@ -240,9 +244,7 @@ module beast_collector::beast_generator {
         let auth_address = signer::address_of(auth);
         let manager = borrow_global<BeastManager>(beast_contract_address);
         acl::assert_contains(&manager.acl, auth_address);                                   
-        let resource_signer = get_resource_account_cap(beast_contract_address);
-        let pm = token::get_property_map(signer::address_of(receiver), token_id);
-        let level = property_map::read_u64(&pm, &string::utf8(BEAST_BREEDING_TIME));                
+        let resource_signer = get_resource_account_cap(beast_contract_address);                
         token::mutate_one_token(            
                 &resource_signer,
                 signer::address_of(receiver),
@@ -251,7 +253,7 @@ module beast_collector::beast_generator {
                     string::utf8(BEAST_BREEDING_TIME),                    
                 ],  // property_keys                
                 vector<vector<u8>>[                    
-                    bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400 * 6))
+                    bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400 * 7))
                 ],  // values 
                 vector<String>[
                     string::utf8(b"u64"),                    
