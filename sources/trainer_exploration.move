@@ -97,7 +97,7 @@ module beast_collector::trainer_exploration {
 
         // get egg randomly and by grade
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
-        assert!(grade > 2, error::permission_denied(ENOT_AUTHORIZED));
+        assert!(grade > 2 && grade < 6, error::permission_denied(ENOT_AUTHORIZED));
         let percentage = if(grade == 1) {
             65
         } else if (grade == 2) {
