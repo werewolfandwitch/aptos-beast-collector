@@ -106,11 +106,10 @@ module beast_collector::beast_exploration {
         if(random_idx == 777) {
             let coins = coin::withdraw<WarCoinType>(&resource_signer, 1000 * price_to_pay);                
             coin::deposit(signer::address_of(receiver), coins);
-        };
-        // TODO change it before deployment
+        };        
 
-        // let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));        
-        // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
+        let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));        
+        assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
     }
 }

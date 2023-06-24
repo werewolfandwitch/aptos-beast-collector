@@ -286,26 +286,26 @@ module beast_collector::beast_generator {
             exp = exp - 100;
             level = level + 1;
         };
-        // token::mutate_one_token(            
-        //     &resource_signer,
-        //     holder_addr,
-        //     token_id,            
-        //     vector<String>[                    
-        //         string::utf8(BEAST_LEVEL),
-        //         string::utf8(BEAST_EXP),
-        //         string::utf8(BEAST_DUNGEON_TIME)
-        //     ],  // property_keys                
-        //     vector<vector<u8>>[
-        //         bcs::to_bytes<u64>(&level),
-        //         bcs::to_bytes<u64>(&exp),
-        //         bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400))
-        //     ],  // values 
-        //     vector<String>[
-        //         string::utf8(b"u64"),
-        //         string::utf8(b"u64"),
-        //         string::utf8(b"u64")
-        //     ],      // type
-        // );     
+        token::mutate_one_token(            
+            &resource_signer,
+            holder_addr,
+            token_id,            
+            vector<String>[                    
+                string::utf8(BEAST_LEVEL),
+                string::utf8(BEAST_EXP),
+                string::utf8(BEAST_DUNGEON_TIME)
+            ],  // property_keys                
+            vector<vector<u8>>[
+                bcs::to_bytes<u64>(&level),
+                bcs::to_bytes<u64>(&exp),
+                bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400))
+            ],  // values 
+            vector<String>[
+                string::utf8(b"u64"),
+                string::utf8(b"u64"),
+                string::utf8(b"u64")
+            ],      // type
+        );     
     }
 
     public fun evolve (
