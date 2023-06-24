@@ -55,7 +55,7 @@ module beast_collector::breeding {
         token_name_2:String, property_version_2:u64
     ) acquires Breeding {        
         let resource_signer = get_resource_account_cap(breed_address);                
-        let resource_account_address = signer::address_of(&resource_signer);    
+        let resource_account_address = signer::address_of(&resource_signer);
         let token_id_1 = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name_1, property_version_1);        
         let token_id_2 = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name_2, property_version_2);        
         let pm = token::get_property_map(signer::address_of(holder), token_id_1);        

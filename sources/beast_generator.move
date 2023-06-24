@@ -26,6 +26,7 @@ module beast_collector::beast_generator {
     const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";    
     const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector https://beast.werewolfandwitch.xyz/";
     // item property
+    const BEAST_NUMBER: vector<u8> = b"W_EXP";
     const BEAST_EXP: vector<u8> = b"W_EXP";
     const BEAST_LEVEL: vector<u8> = b"W_LEVEL";
     const BEAST_RARITY: vector<u8> = b"W_RARITY"; // very common(1),Common(2), Rare(3), Very Rare(4), Epic (5), Legendary(6), Mythic(7)
@@ -208,6 +209,7 @@ module beast_collector::beast_generator {
                 token::create_token_mutability_config(mutability_config),
                 // type
                 vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE),
+                    string::utf8(BEAST_NUMBER),
                     string::utf8(BEAST_EXP),
                     string::utf8(BEAST_LEVEL),
                     string::utf8(BEAST_RARITY),
@@ -217,6 +219,7 @@ module beast_collector::beast_generator {
                     string::utf8(BEAST_EVOLUTION_TIME)
                 ],  // property_keys                
                 vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&false),
+                    bcs::to_bytes<u64>(&beast_number),
                     bcs::to_bytes<u64>(&0),
                     bcs::to_bytes<u64>(&1),
                     bcs::to_bytes<u64>(&rarity),
@@ -226,6 +229,7 @@ module beast_collector::beast_generator {
                     bcs::to_bytes<u64>(&timestamp::now_seconds()),
                 ],  // values 
                 vector<String>[string::utf8(b"bool"),string::utf8(b"bool"),
+                    string::utf8(b"u64"),
                     string::utf8(b"u64"),
                     string::utf8(b"u64"),
                     string::utf8(b"u64"),
@@ -301,6 +305,88 @@ module beast_collector::beast_generator {
                     string::utf8(b"u64")
                 ],      // type
             );     
+    }
+
+    public fun evolve (
+        receiver: &signer, auth: &signer, beast_contract_address:address, token_id: TokenId,
+    ) acquires BeastCollection, BeastManager {
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<BeastManager>(beast_contract_address);
+        acl::assert_contains(&manager.acl, auth_address);
+        let collection = borrow_global_mut<BeastCollection>(beast_contract_address);        
+        let resource_signer = get_resource_account_cap(beast_contract_address);                               
+        let resource_account_address = signer::address_of(&resource_signer);    
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);        
+        let evo_stage = property_map::read_u64(&pm, &string::utf8(BEAST_EVO_STAGE));        
+        let beast_number = property_map::read_u64(&pm, &string::utf8(BEAST_NUMBER));
+        let beast_rarity = property_map::read_u64(&pm, &string::utf8(BEAST_RARITY));        
+        let evolution_struct = table::borrow(&collection.collections, beast_number);
+        evo_stage = evo_stage + 1;
+        let new_name = evolution_struct.stage_name_2;
+        let new_uri = evolution_struct.stage_uri_2;
+        let story = evolution_struct.story;        
+        if(evo_stage == 2) {
+            new_name = evolution_struct.stage_name_2;
+            new_uri = evolution_struct.stage_uri_2;        
+        } else if(evo_stage == 3) {
+            new_name = evolution_struct.stage_name_3;
+            new_uri = evolution_struct.stage_uri_3;        
+        };   
+        // burn and new token
+        let mutability_config = &vector<bool>[ true, true, true, true, true ];
+        let token_data_id;
+        if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_name)) {
+            token_data_id = token::create_tokendata(
+                &resource_signer,
+                string::utf8(BEAST_COLLECTION_NAME),
+                new_name,
+                story,
+                999999, 
+                new_uri,
+                beast_contract_address, // royalty fee to                
+                FEE_DENOMINATOR,
+                4000,
+                // we don't allow any mutation to the token
+                token::create_token_mutability_config(mutability_config),
+                // type
+                vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE),
+                    string::utf8(BEAST_NUMBER),
+                    string::utf8(BEAST_EXP),
+                    string::utf8(BEAST_LEVEL),
+                    string::utf8(BEAST_RARITY),
+                    string::utf8(BEAST_EVO_STAGE),
+                    string::utf8(BEAST_DUNGEON_TIME),                    
+                    string::utf8(BEAST_BREEDING_TIME),
+                    string::utf8(BEAST_EVOLUTION_TIME)
+                ],  // property_keys                
+                vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&false),
+                    bcs::to_bytes<u64>(&beast_number),
+                    bcs::to_bytes<u64>(&0),
+                    bcs::to_bytes<u64>(&1),
+                    bcs::to_bytes<u64>(&beast_rarity),
+                    bcs::to_bytes<u64>(&evo_stage),
+                    bcs::to_bytes<u64>(&timestamp::now_seconds()),
+                    bcs::to_bytes<u64>(&timestamp::now_seconds()),
+                    bcs::to_bytes<u64>(&timestamp::now_seconds()),
+                ],  // values 
+                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),                    
+                ],
+            );            
+        } else {
+            token_data_id = token::create_token_data_id(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_name);                    
+        };
+        let token_id = token::mint_token(&resource_signer, token_data_id, 1);
+        token::opt_in_direct_transfer(receiver, true);
+        token::direct_transfer(&resource_signer, receiver, token_id, 1); 
+
     }
               
 }
