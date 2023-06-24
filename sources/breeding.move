@@ -39,7 +39,7 @@ module beast_collector::breeding {
 
     entry fun init<WarCoinType>(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
-        let (_resource_signer, signer_cap) = account::create_resource_account(sender, x"07");        
+        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"07");        
         if(!exists<Breeding>(sender_addr)){            
             move_to(sender, Breeding {                
                 signer_cap,                

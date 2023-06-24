@@ -58,7 +58,7 @@ module beast_collector::beast_exploration {
 
     entry fun init<WarCoinType>(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
-        let (_resource_signer, signer_cap) = account::create_resource_account(sender, x"09");
+        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"09");
         if(!exists<Exploration>(sender_addr)){            
             move_to(sender, Exploration {                
                 signer_cap,
