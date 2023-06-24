@@ -78,7 +78,7 @@ module beast_collector::trainer_exploration {
         };
                 
         let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
-        assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
+        // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
         // extend time
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
@@ -123,7 +123,7 @@ module beast_collector::trainer_exploration {
         };
                 
         let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
-        assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
+        // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
         // extend time and add exp
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
