@@ -272,7 +272,7 @@ module beast_collector::beast_generator {
                     string::utf8(BEAST_BREEDING_TIME),                    
                 ],  // property_keys                
                 vector<vector<u8>>[                    
-                    bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400 * 7))
+                    bcs::to_bytes<u64>(&(timestamp::now_seconds() + (86400 * 7)))
                 ],  // values 
                 vector<String>[
                     string::utf8(b"u64"),                    
