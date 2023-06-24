@@ -14,7 +14,9 @@ module beast_collector::evolve {
 
     use beast_collector::beast_generator;
 
-    const ENOT_AUTHORIZED:u64 = 0;            
+    const ENOT_AUTHORIZED:u64 = 0;       
+    const EREQUIRED_TOP_LEVEL:u64 = 1;         
+    const EIS_FINAL_STAGE:u64 = 2;
 
     const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";  
 
@@ -59,8 +61,13 @@ module beast_collector::evolve {
         let resource_account_address = signer::address_of(&resource_signer);
         let token_id = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name, property_version);                
         let pm = token::get_property_map(signer::address_of(holder), token_id);
-
-        let beast_exp = property_map::read_u64(&pm, &string::utf8(BEAST_EXP));
+        
         let beast_level = property_map::read_u64(&pm, &string::utf8(BEAST_LEVEL));
+        let beast_evo_stage = property_map::read_u64(&pm, &string::utf8(BEAST_EVO_STAGE));
+        assert!(beast_level == 5,error::permission_denied(EREQUIRED_TOP_LEVEL));
+        assert!(beast_evo_stage < 3, error::permission_denied(EIS_FINAL_STAGE));
+        // todo up evo stage in beast generator
+        // todo up evo stage in beast generator
+        
     }
 }
