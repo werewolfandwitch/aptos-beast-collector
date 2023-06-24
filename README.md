@@ -2,6 +2,9 @@
 
 - Werwolf and witch Beast Game[https://beast.werewolfandwitch.xyz/]
 
+# Description
+
+The expansion game of Werewolf and Witch, called Move, is a decentralized game based on smart contracts. Users can obtain eggs using the Trainer and progress through activities such as hatching, breeding, and evolution
 
 License
 =======
