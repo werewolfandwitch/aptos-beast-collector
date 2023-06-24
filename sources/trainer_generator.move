@@ -18,8 +18,7 @@ module beast_collector::trainer_generator {
     const BURNABLE_BY_OWNER: vector<u8> = b"TOKEN_BURNABLE_BY_OWNER";
     const TOKEN_PROPERTY_MUTABLE: vector<u8> = b"TOKEN_PROPERTY_MUTATBLE";    
 
-    const FEE_DENOMINATOR: u64 = 100000;
-    const WAR_COIN_DECIMAL:u64 = 100000000;   
+    const FEE_DENOMINATOR: u64 = 100000;    
     
     // collection name / info
     const TRAINER_COLLECTION_NAME:vector<u8> = b"W&W Beast Collector";
