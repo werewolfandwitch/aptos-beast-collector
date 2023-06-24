@@ -28,7 +28,7 @@ module beast_collector::beast_generator {
     const BEAST_EXP: vector<u8> = b"W_EXP";
     const BEAST_LEVEL: vector<u8> = b"W_LEVEL";
     const BEAST_RARITY: vector<u8> = b"W_RARITY"; // very common(1),Common(2), Rare(3), Very Rare(4), Epic (5), Legendary(6), Mythic(7)
-    const BEAST_EVO_STAGE: vector<u8> = b"W_EVO_STAGE";
+    const BEAST_EVO_STAGE: vector<u8> = b"W_EVO_STAGE"; // 1 , 2, 3
     const BEAST_DUNGEON_TIME: vector<u8> = b"W_DUNGEON_TIME";
     const BEAST_BREEDING_TIME: vector<u8> = b"W_BREEDING";
     const BEAST_EVOLUTION_TIME: vector<u8> = b"W_EVOLUTION";    

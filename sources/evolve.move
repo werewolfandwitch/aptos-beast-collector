@@ -1,12 +1,27 @@
 
 module beast_collector::evolve {
     
-    use std::signer;            
-    use aptos_framework::coin::{Self};    
-    use aptos_framework::account;        
+    use std::signer;    
+    use std::error;
+    use std::string::{Self, String}; 
+    use aptos_framework::timestamp;    
+    use aptos_framework::coin::{Self};       
+    use aptos_framework::event::{Self};        
+    use aptos_token::property_map::{Self};
+    use aptos_token::token::{Self}; 
+    use aptos_framework::account;    
+    use aptos_framework::guid;   
 
+    use beast_collector::beast_generator;
 
     const ENOT_AUTHORIZED:u64 = 0;            
+
+    const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";  
+
+    const BEAST_EXP: vector<u8> = b"W_EXP";
+    const BEAST_LEVEL: vector<u8> = b"W_LEVEL";
+    const BEAST_EVO_STAGE: vector<u8> = b"W_EVO_STAGE"; // 1 , 2, 3        
+    const BEAST_EVOLUTION_TIME: vector<u8> = b"W_EVOLUTION";    
 
     struct Evolve has store, key {          
         signer_cap: account::SignerCapability,                                                        
@@ -36,7 +51,16 @@ module beast_collector::evolve {
         
     } 
             
-    entry fun evolve() {
-        // token::burn(holder, @beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name_1, property_version_1, 1);
+    entry fun evolve(
+        holder: &signer, breed_address: address,
+        token_name:String, property_version:u64,        
+    ) acquires Evolve {
+        let resource_signer = get_resource_account_cap(breed_address);                
+        let resource_account_address = signer::address_of(&resource_signer);
+        let token_id = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name, property_version);                
+        let pm = token::get_property_map(signer::address_of(holder), token_id);
+
+        let beast_exp = property_map::read_u64(&pm, &string::utf8(BEAST_EXP));
+        let beast_level = property_map::read_u64(&pm, &string::utf8(BEAST_LEVEL));
     }
 }

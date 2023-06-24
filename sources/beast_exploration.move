@@ -1,5 +1,5 @@
 
-module beast_collector::pet_exploration {
+module beast_collector::beast_exploration {
     use std::error;
     use aptos_framework::timestamp;
     use beast_collector::utils;
