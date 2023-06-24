@@ -66,7 +66,6 @@ module beast_collector::evolve {
         let beast_evo_stage = property_map::read_u64(&pm, &string::utf8(BEAST_EVO_STAGE));
         assert!(beast_level > 4,error::permission_denied(EREQUIRED_TOP_LEVEL));
         assert!(beast_evo_stage < 3, error::permission_denied(EIS_FINAL_STAGE));
-        beast_generator::evolve(holder, &resource_signer, @beast_gen_address, token_id);
-        
+        beast_generator::evolve(holder, &resource_signer, @beast_gen_address, token_id);        
     }
 }
