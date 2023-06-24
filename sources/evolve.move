@@ -3,14 +3,11 @@ module beast_collector::evolve {
     
     use std::signer;    
     use std::error;
-    use std::string::{Self, String}; 
-    use aptos_framework::timestamp;    
-    use aptos_framework::coin::{Self};       
-    use aptos_framework::event::{Self};        
+    use std::string::{Self, String};     
+    use aptos_framework::coin::{Self};           
     use aptos_token::property_map::{Self};
     use aptos_token::token::{Self}; 
-    use aptos_framework::account;    
-    use aptos_framework::guid;   
+    use aptos_framework::account;
 
     use beast_collector::beast_generator;
 
@@ -57,8 +54,7 @@ module beast_collector::evolve {
         holder: &signer, breed_address: address,
         token_name:String, property_version:u64,        
     ) acquires Evolve {
-        let resource_signer = get_resource_account_cap(breed_address);                
-        let resource_account_address = signer::address_of(&resource_signer);
+        let resource_signer = get_resource_account_cap(breed_address);                        
         let token_id = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name, property_version);                
         let pm = token::get_property_map(signer::address_of(holder), token_id);
         

@@ -7,8 +7,7 @@ module beast_collector::egg_generator {
     use aptos_token::token::{Self};
     use beast_collector::acl::{Self};    
     use aptos_framework::coin;        
-    use std::option::{Self};
-    use aptos_framework::guid;
+    use std::option::{Self};    
     use beast_collector::utils;
     use aptos_framework::event::{Self, EventHandle};    
 

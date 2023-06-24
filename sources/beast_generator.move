@@ -1,19 +1,15 @@
 
-module beast_collector::beast_generator {            
-    use std::error;
+module beast_collector::beast_generator {                
     use std::bcs;
     use std::signer;    
-    use std::string::{Self, String};    
-    use std::option::{Self};
+    use std::string::{Self, String};        
     use aptos_std::table::{Self, Table};  
     use aptos_token::property_map::{Self};
     use aptos_token::token::{Self, TokenId};     
     use aptos_framework::coin;    
-    use aptos_framework::event::{Self, EventHandle};
-    use std::vector;
+    use aptos_framework::event::{Self, EventHandle};    
     use aptos_framework::timestamp;
-    use aptos_framework::account;    
-    use beast_collector::utils;
+    use aptos_framework::account;        
     use beast_collector::acl::{Self};        
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
@@ -162,11 +158,10 @@ module beast_collector::beast_generator {
 
      entry fun remove_collection (
         sender: &signer, beast_number: u64, 
-        ) acquires BeastCollection,BeastManager {  
+        ) acquires BeastCollection {  
         let creator_address = signer::address_of(sender);
         let collection = borrow_global_mut<BeastCollection>(creator_address);
-        table::remove(&mut collection.collections, beast_number);                                                          
-        let beast_manager = borrow_global_mut<BeastManager>(creator_address);        
+        table::remove(&mut collection.collections, beast_number); 
     }
     
 
