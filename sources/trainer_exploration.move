@@ -6,7 +6,7 @@ module beast_collector::trainer_exploration {
     use beast_collector::egg_generator;
     use std::signer;    
     use std::string::{Self, String};    
-    use aptos_token::token::{Self, TokenId};     
+    use aptos_token::token::{Self};     
     use aptos_token::property_map::{Self};    
     use aptos_framework::guid;
     use aptos_framework::account;
@@ -32,7 +32,7 @@ module beast_collector::trainer_exploration {
 
     entry fun init(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"03");                                
+        let (_resource_signer, signer_cap) = account::create_resource_account(sender, x"03");                                
         if(!exists<Exploration>(sender_addr)){            
             move_to(sender, Exploration {                
                 signer_cap,                
@@ -48,18 +48,19 @@ module beast_collector::trainer_exploration {
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         // get egg randomly and by grade
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
-        let percentage = 60;
         // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
-        if(grade == 1) {
-            percentage = 65;
+        let percentage = if(grade == 1) {
+            65
         } else if (grade == 2) {
-            percentage = 70;
+            70
         } else if (grade == 3) {
-            percentage = 75;
+            75
         } else if (grade == 4) {
-            percentage = 80;
+            80
+        } else if (grade == 5){
+            85
         } else {
-            percentage = 85;
+            10
         };
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        

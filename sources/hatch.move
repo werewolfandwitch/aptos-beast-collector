@@ -2,8 +2,7 @@
 module beast_collector::hatch {
     
     use std::signer;    
-    use std::error;
-    use aptos_framework::timestamp;    
+    use std::error;    
     use aptos_framework::coin::{Self};    
     use aptos_framework::event::{Self, EventHandle};        
     use aptos_framework::account;    
@@ -40,7 +39,7 @@ module beast_collector::hatch {
 
     entry fun init(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"02");        
+        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"06");        
         if(!exists<Hatch>(sender_addr)){            
             move_to(sender, Hatch {                
                 signer_cap,                
@@ -61,8 +60,7 @@ module beast_collector::hatch {
         // burn and mint
         if(egg_rarity == 1) {
             // mint_egg_common
-            mint_egg_common(receiver, &resource_signer, hatch_address);
-            // 
+            mint_egg_common(receiver, &resource_signer, hatch_address);            
         } else if(egg_rarity == 2){
             // mint_egg_rare
             mint_egg_rare(receiver, &resource_signer, hatch_address);
