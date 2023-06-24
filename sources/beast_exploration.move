@@ -5,6 +5,7 @@ module beast_collector::beast_exploration {
     use aptos_framework::timestamp;
     use beast_collector::utils;
     use beast_collector::trainer_generator;
+    use beast_collector::beast_generator;    
     use beast_collector::egg_generator;
     use std::signer;    
     use std::string::{Self, String};    
@@ -68,10 +69,12 @@ module beast_collector::beast_exploration {
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;                    
+        beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address,token_id, random_exp);                
 
-        // extend time
-        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
-        // trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);                
+        // TODO change it before deployment
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);        
+        let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));
+        // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
     }
 
     entry fun beast_exploration_2<WarCoinType>(receiver: &signer, 
@@ -82,16 +85,30 @@ module beast_collector::beast_exploration {
         let price_to_pay = 100000000; // 1 WAR Coin
         let coins_to_pay = coin::withdraw<WarCoinType>(receiver, price_to_pay);                
         coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
+        
 
         let token_id = token::create_token_id_raw(beast_token_creator,string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
-        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;                    
+        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;
+        beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address, token_id, random_exp);        
+        // earning
+        let earned = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
+        let coins = coin::withdraw<WarCoinType>(&resource_signer, earned * price_to_pay);                
+        coin::deposit(signer::address_of(receiver), coins);
+        
+        // jackpot number = 777
+        let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 1000, uuid) + 1;
+        if(random_idx == 777) {
+            let coins = coin::withdraw<WarCoinType>(&resource_signer, 1000 * price_to_pay);                
+            coin::deposit(signer::address_of(receiver), coins);
+        };
+        // TODO change it before deployment
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);        
+        let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));
+        // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
 
-        // extend time
-        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
-        // trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);                
     }
 }

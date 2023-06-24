@@ -57,6 +57,7 @@ module beast_collector::hatch {
         let egg_rarity = property_map::read_u64(&pm, &string::utf8(PROPERTY_RARITY));
         assert!(egg_rarity > 0 && egg_rarity <= 3, error::permission_denied(ENOT_AUTHORIZED));        
         // burn and mint
+        token::burn(receiver, egg_creator, string::utf8(EGG_COLLECTION_NAME), egg_token_name, property_version, 1);                                
         if(egg_rarity == 1) {
             // mint_egg_common
             mint_egg_common(receiver, &resource_signer, hatch_address);            

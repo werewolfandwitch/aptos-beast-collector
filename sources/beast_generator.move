@@ -1,5 +1,6 @@
 
 module beast_collector::beast_generator {            
+    use std::error;
     use std::bcs;
     use std::signer;    
     use std::string::{Self, String};    
@@ -145,7 +146,7 @@ module beast_collector::beast_generator {
         ) acquires BeastCollection, BeastManager {
         let creator_address = signer::address_of(sender);        
         let collections = borrow_global_mut<BeastCollection>(creator_address);
-        let beast_manager = borrow_global_mut<BeastManager>(creator_address);        
+        let _beast_manager = borrow_global_mut<BeastManager>(creator_address);        
         table::add(&mut collections.collections, beast_number, Evolution {
             stage_name_1,            
             stage_uri_1,
@@ -190,8 +191,7 @@ module beast_collector::beast_generator {
         let token_name = evolution_struct.stage_name_1;
         let token_uri = evolution_struct.stage_uri_1;
         let rarity = evolution_struct.rarity;
-        let story = evolution_struct.story;
-        let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/beast/1.png");
+        let story = evolution_struct.story;        
         let token_data_id;
         if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), token_name)) {
             token_data_id = token::create_tokendata(
@@ -264,6 +264,43 @@ module beast_collector::beast_generator {
                     string::utf8(b"u64"),                    
                 ],      // type
             );             
+    }
+
+    public fun add_exp (
+        receiver: &signer, auth: &signer, beast_contract_address:address, token_id: TokenId, add_exp:u64,
+    ) acquires BeastManager {  
+        let auth_address = signer::address_of(auth);
+        let manager = borrow_global<BeastManager>(beast_contract_address);
+        acl::assert_contains(&manager.acl, auth_address);                                   
+        let resource_signer = get_resource_account_cap(beast_contract_address);                               
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        let level = property_map::read_u64(&pm, &string::utf8(BEAST_LEVEL));
+        let exp = property_map::read_u64(&pm, &string::utf8(BEAST_EXP));
+        exp = exp + add_exp;        
+        if(exp > 100) {
+                exp = exp - 100;
+                level = level + 1;
+            };
+            token::mutate_one_token(            
+                &resource_signer,
+                signer::address_of(receiver),
+                token_id,            
+                vector<String>[                    
+                    string::utf8(BEAST_LEVEL),
+                    string::utf8(BEAST_EXP),
+                    string::utf8(BEAST_DUNGEON_TIME)
+                ],  // property_keys                
+                vector<vector<u8>>[
+                    bcs::to_bytes<u64>(&level),
+                    bcs::to_bytes<u64>(&exp),
+                    bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400))
+                ],  // values 
+                vector<String>[
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64")
+                ],      // type
+            );     
     }
               
 }
