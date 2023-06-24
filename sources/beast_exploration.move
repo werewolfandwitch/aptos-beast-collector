@@ -59,7 +59,7 @@ module beast_collector::beast_exploration {
         };
     }   
 
-    entry fun beast_exploration(
+    entry fun beast_exploration<WarCoinType>(
         receiver: &signer, beast_token_name: String, _beast_token_creator:address, property_version:u64, exporation_address:address,
         ) acquires Exploration {
         if(!coin::is_account_registered<WarCoinType>(signer::address_of(receiver))){
