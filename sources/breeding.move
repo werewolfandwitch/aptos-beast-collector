@@ -37,7 +37,7 @@ module beast_collector::breeding {
         account::create_signer_with_capability(&launchpad.signer_cap)
     }
 
-    entry fun init(sender: &signer) {
+    entry fun init<WarCoinType>(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
         let (_resource_signer, signer_cap) = account::create_resource_account(sender, x"07");        
         if(!exists<Breeding>(sender_addr)){            
@@ -45,7 +45,10 @@ module beast_collector::breeding {
                 signer_cap,                
             });
         };
-        
+
+        if(!coin::is_account_registered<WarCoinType>(signer::address_of(&resource_signer))){
+            coin::register<WarCoinType>(&resource_signer);
+        };        
     } 
     
     entry fun breeding<WarCoinType>(
