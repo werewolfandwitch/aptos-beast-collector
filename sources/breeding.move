@@ -10,8 +10,9 @@ module beast_collector::breeding {
     use aptos_token::property_map::{Self};
     use aptos_token::token::{Self}; 
     use aptos_framework::account;    
-    use aptos_framework::guid;       
+    use aptos_framework::guid;
 
+    use beast_collector::beast_generator;       
     use beast_collector::egg_generator::{Self};    
 
     const ENOT_AUTHORIZED:u64 = 0;        
@@ -73,7 +74,8 @@ module beast_collector::breeding {
         let now_seconds = timestamp::now_seconds();
         assert!(breed_expired_time_1 < now_seconds, error::permission_denied(ENOT_AUTHORIZED));
         assert!(breed_expired_time_2 < now_seconds, error::permission_denied(ENOT_AUTHORIZED));                
-        
+        beast_generator::extend_breeding_time (holder, &resource_signer, @beast_gen_address, token_id_1);
+        beast_generator::extend_breeding_time (holder, &resource_signer, @beast_gen_address, token_id_2);
     }
 
 
