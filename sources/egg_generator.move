@@ -16,10 +16,7 @@ module beast_collector::egg_generator {
     const BURNABLE_BY_OWNER: vector<u8> = b"TOKEN_BURNABLE_BY_OWNER";
     const TOKEN_PROPERTY_MUTABLE: vector<u8> = b"TOKEN_PROPERTY_MUTATBLE";    
 
-    const FEE_DENOMINATOR: u64 = 100000;
-
-    const ENOT_IN_ACL: u64 = 1;
-    const EIS_TOP_LEVEL: u64 = 2;
+    const FEE_DENOMINATOR: u64 = 100000;    
 
     // collection name / info
     const EGG_COLLECTION_NAME:vector<u8> = b"W&W EGG";

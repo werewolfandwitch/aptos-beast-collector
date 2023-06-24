@@ -5,14 +5,8 @@ module beast_collector::evolve {
     use aptos_framework::coin::{Self};    
     use aptos_framework::account;        
 
-    const MAX_AMOUNT:u64 = 1000;
-    const APT_PRICE:u64 = 50000000;
-    const WAR_PRICE:u64 = 50000000000;    
 
-    const ENOT_AUTHORIZED:u64 = 0;
-    const ENOT_OPENED: u64 = 1; 
-    const EMAX_AMOUNT: u64 = 2;   
-    const ENO_SUFFICIENT_FUND: u64 = 3;
+    const ENOT_AUTHORIZED:u64 = 0;            
 
     struct Evolve has store, key {          
         signer_cap: account::SignerCapability,                                                        
@@ -41,8 +35,8 @@ module beast_collector::evolve {
         };
         
     } 
-    // TODO 
+            
     entry fun evolve() {
-
+        // token::burn(holder, @beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name_1, property_version_1, 1);
     }
 }
