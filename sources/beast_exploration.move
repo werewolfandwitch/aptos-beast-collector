@@ -107,9 +107,9 @@ module beast_collector::beast_exploration {
         coin::deposit(signer::address_of(receiver), coins);
         
         // jackpot number = 777
-        let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 100, uuid) + 1;
+        let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 1000, uuid) + 1;
         if(random_idx == 777) {
-            let coins = coin::withdraw<WarCoinType>(&resource_signer, 1000 * price_to_pay);                
+            let coins = coin::withdraw<WarCoinType>(&resource_signer, 100 * price_to_pay);                
             coin::deposit(signer::address_of(receiver), coins);
         };        
 
