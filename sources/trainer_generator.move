@@ -8,8 +8,7 @@ module beast_collector::trainer_generator {
     use aptos_token::property_map::{Self};
     use aptos_token::token::{Self, TokenId}; 
     use aptos_framework::coin;    
-    use aptos_framework::event::{Self, EventHandle};
-    use std::vector;
+    use aptos_framework::event::{Self, EventHandle};    
     use aptos_framework::account;    
     use beast_collector::utils;
     use beast_collector::acl::{Self};    

@@ -10,6 +10,7 @@ module beast_collector::beast_generator {
     use aptos_framework::coin;    
     use aptos_framework::event::{Self, EventHandle};
     use std::vector;
+    use aptos_framework::timestamp;
     use aptos_framework::account;    
     use beast_collector::utils;
     use beast_collector::acl::{Self};        
@@ -25,13 +26,13 @@ module beast_collector::beast_generator {
     const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";    
     const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector https://beast.werewolfandwitch.xyz/";
     // item property
-    const ITEM_EXP: vector<u8> = b"W_EXP";
-    const ITEM_LEVEL: vector<u8> = b"W_LEVEL";
-    const ITEM_RARITY: vector<u8> = b"W_RARITY"; // very common(1),Common(2), Rare(3), Very Rare(4), Epic (5), Legendary(6), Mythic(7)
-    const ITEM_EVO_STAGE: vector<u8> = b"W_EVO_STAGE";
-    const ITEM_DUNGEON_TIME: vector<u8> = b"W_DUNGEON_TIME";
-    const ITEM_BREEDING_TIME: vector<u8> = b"W_BREEDING";
-    const ITEM_EVOLUTION_TIME: vector<u8> = b"W_EVOLUTION";
+    const BEAST_EXP: vector<u8> = b"W_EXP";
+    const BEAST_LEVEL: vector<u8> = b"W_LEVEL";
+    const BEAST_RARITY: vector<u8> = b"W_RARITY"; // very common(1),Common(2), Rare(3), Very Rare(4), Epic (5), Legendary(6), Mythic(7)
+    const BEAST_EVO_STAGE: vector<u8> = b"W_EVO_STAGE";
+    const BEAST_DUNGEON_TIME: vector<u8> = b"W_DUNGEON_TIME";
+    const BEAST_BREEDING_TIME: vector<u8> = b"W_BREEDING";
+    const BEAST_EVOLUTION_TIME: vector<u8> = b"W_EVOLUTION";
   
     const ENOT_CREATOR:u64 = 1;
     const ESAME_MATERIAL:u64 = 2;
@@ -52,6 +53,7 @@ module beast_collector::beast_generator {
         stage_uri_2: String,
         stage_name_3: String,        
         stage_uri_3: String,
+        rarity: u64,
         story: String
     }
 
@@ -137,9 +139,9 @@ module beast_collector::beast_generator {
         stage_name_1: String, stage_uri_1: String, 
         stage_name_2: String, stage_uri_2: String, 
         stage_name_3: String, stage_uri_3: String, 
-        story: String,
+        rarity:u64, story: String,
         ) acquires BeastCollection, BeastManager {
-        let creator_address = signer::address_of(sender);
+        let creator_address = signer::address_of(sender);        
         let collections = borrow_global_mut<BeastCollection>(creator_address);
         let beast_manager = borrow_global_mut<BeastManager>(creator_address);
         beast_manager.maximum_beast_count = beast_manager.maximum_beast_count + 1;
@@ -150,7 +152,8 @@ module beast_collector::beast_generator {
             stage_uri_2,
             stage_name_3,
             stage_uri_3,
-            story: story
+            rarity,
+            story
         });
     }
 
@@ -163,12 +166,11 @@ module beast_collector::beast_generator {
         let beast_manager = borrow_global_mut<BeastManager>(creator_address);
         beast_manager.maximum_beast_count = beast_manager.maximum_beast_count - 1;
     }
-
     
 
     public fun mint_beast (
-        sender: &signer,auth: &signer, minter_address:address, beast_number:u64
-    ) acquires BeastManager {    
+        sender: &signer, auth: &signer, minter_address:address, beast_number:u64
+    ) acquires BeastCollection, BeastManager {    
         let auth_address = signer::address_of(auth);
         let manager = borrow_global<BeastManager>(minter_address);
         acl::assert_contains(&manager.acl, auth_address);                           
@@ -182,43 +184,61 @@ module beast_collector::beast_generator {
                 string::utf8(BEAST_COLLECTION_NAME), 
                 string::utf8(COLLECTION_DESCRIPTION), 
                 collection_uri, 99999, mutate_setting);        
-        };        
-        let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(BEAST_COLLECTION_NAME));        
-        let new_supply = option::extract<u64>(supply_count);                        
-        let i = 0;
-        let token_name = string::utf8(BEAST_COLLECTION_NAME);
-        while (i <= new_supply) {
-            let new_token_name = string::utf8(BEAST_COLLECTION_NAME);                
-            string::append_utf8(&mut new_token_name, b" #");
-            let count_string = utils::to_string((i as u128));
-            string::append(&mut new_token_name, count_string);                                
-            if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_token_name)) {
-                token_name = new_token_name;                
-                break
-            };
-            i = i + 1;
-        };                  
-        let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/beast/1.png");                
-        let token_data_id = token::create_tokendata(
+        };
+        let collection = borrow_global_mut<BeastCollection>(minter_address);
+        let evolution_struct = table::borrow(&collection.collections, beast_number);
+        let token_name = evolution_struct.stage_name_1;
+        let token_uri = evolution_struct.stage_uri_1;
+        let rarity = evolution_struct.rarity;
+        let story = evolution_struct.story;
+
+        let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/beast/1.png");
+        let token_data_id;
+        if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), token_name)) {
+            token_data_id = token::create_tokendata(
                 &resource_signer,
                 string::utf8(BEAST_COLLECTION_NAME),
                 token_name,
-                string::utf8(COLLECTION_DESCRIPTION),
-                1, // 1 maximum for NFT 
-                collection_uri, // TODO should be changed. 
+                story,
+                99999, 
+                token_uri,
                 minter_address, // royalty fee to                
                 FEE_DENOMINATOR,
-                4000, // TODO:: should be check later::royalty_points_numerator
+                4000,
                 // we don't allow any mutation to the token
                 token::create_token_mutability_config(mutability_config),
                 // type
-                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE)
-                    ],  // property_keys                
-                vector<vector<u8>>[bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true), bcs::to_bytes<bool>(&true)
-                    ],  // values 
-                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"), string::utf8(b"bool")
-                    ],
-        );
+                vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE),
+                    string::utf8(BEAST_EXP),
+                    string::utf8(BEAST_LEVEL),
+                    string::utf8(BEAST_RARITY),
+                    string::utf8(BEAST_EVO_STAGE),
+                    string::utf8(BEAST_DUNGEON_TIME),                    
+                    string::utf8(BEAST_BREEDING_TIME),
+                    string::utf8(BEAST_EVOLUTION_TIME)
+                ],  // property_keys                
+                vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&false),
+                    bcs::to_bytes<u64>(&0),
+                    bcs::to_bytes<u64>(&1),
+                    bcs::to_bytes<u64>(&rarity),
+                    bcs::to_bytes<u64>(&1),
+                    bcs::to_bytes<u64>(&timestamp::now_seconds()),
+                    bcs::to_bytes<u64>(&timestamp::now_seconds()),
+                    bcs::to_bytes<u64>(&timestamp::now_seconds()),
+                ],  // values 
+                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),
+                    string::utf8(b"u64"),                    
+                ],
+            );            
+        } else {
+            token_data_id = token::create_token_data_id(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), token_name);                    
+        };
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(sender, true);
         token::direct_transfer(&resource_signer, sender, token_id, 1);        

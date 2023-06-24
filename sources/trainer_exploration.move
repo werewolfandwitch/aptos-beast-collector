@@ -5,16 +5,12 @@ module beast_collector::trainer_exploration {
     use beast_collector::trainer_generator;
     use beast_collector::egg_generator;
     use std::signer;    
-    use aptos_token::token::{Self, TokenId}; 
     use std::string::{Self, String};    
+    use aptos_token::token::{Self, TokenId};     
     use aptos_token::property_map::{Self};    
     use aptos_framework::guid;
     use aptos_framework::account;
-    
 
-    // check collection creator 
-    // check trainer grade and create egg by grade
-    // check timer and change it for next exploration
     const TRAINER_COLLECTION_NAME:vector<u8> = b"W&W Beast Collector";
     
     const PROPERTY_EXP: vector<u8> = b"W_EXP"; // 100 MAX, 100 EXP => 1 LEVEL UP
