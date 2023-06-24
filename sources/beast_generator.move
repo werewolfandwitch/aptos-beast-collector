@@ -70,6 +70,7 @@ module beast_collector::beast_generator {
 
     struct MintedEvent has drop, store {
         minted_item: token::TokenId,
+        owner: address,
         generated_time: u64
     }
 
