@@ -51,6 +51,12 @@ module beast_collector::beast_generator {
         added: address,        
     }
 
+    struct LevelUpEvent has drop, store {
+        owner: address,
+        level: u64,
+        beast: TokenId
+    }
+
     struct CollectionAdded has drop, store {
         material_1: String,        
         material_2: String,
@@ -64,7 +70,8 @@ module beast_collector::beast_generator {
         maximum_beast_count:u64,
         acl_events:EventHandle<AclAddEvent>,
         token_minting_events: EventHandle<MintedEvent>,
-        collection_add_events:EventHandle<CollectionAdded>,                                                  
+        collection_add_events:EventHandle<CollectionAdded>,
+        level_up_events:EventHandle<LevelUpEvent>,
     } 
 
 
@@ -113,6 +120,7 @@ module beast_collector::beast_generator {
                 acl_events:account::new_event_handle<AclAddEvent>(sender),
                 token_minting_events: account::new_event_handle<MintedEvent>(sender),
                 collection_add_events: account::new_event_handle<CollectionAdded>(sender),                                                  
+                level_up_events:account::new_event_handle<LevelUpEvent>(sender)
             });
         };
         
@@ -307,7 +315,13 @@ module beast_collector::beast_generator {
                 string::utf8(b"u64"),
                 string::utf8(b"u64")
             ],      // type
-        );     
+        ); 
+        let game_events = borrow_global_mut<BeastManager>(beast_contract_address);               
+        event::emit_event(&mut game_events.level_up_events, LevelUpEvent {            
+            owner: holder_addr,
+            level: level,
+            beast: token_id
+        });    
     }
 
     public fun evolve (
