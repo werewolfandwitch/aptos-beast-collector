@@ -144,17 +144,17 @@ module beast_collector::beast_generator {
         let creator_address = signer::address_of(sender);        
         let collections = borrow_global_mut<BeastCollection>(creator_address);
         let beast_manager = borrow_global_mut<BeastManager>(creator_address);
-        beast_manager.maximum_beast_count = beast_manager.maximum_beast_count + 1;
-        table::add(&mut collections.collections, beast_number, Evolution {
-            stage_name_1,            
-            stage_uri_1,
-            stage_name_2, 
-            stage_uri_2,
-            stage_name_3,
-            stage_uri_3,
-            rarity,
-            story
-        });
+        // beast_manager.maximum_beast_count = beast_manager.maximum_beast_count + 1;
+        // table::add(&mut collections.collections, beast_number, Evolution {
+        //     stage_name_1,            
+        //     stage_uri_1,
+        //     stage_name_2, 
+        //     stage_uri_2,
+        //     stage_name_3,
+        //     stage_uri_3,
+        //     rarity,
+        //     story
+        // });
     }
 
      entry fun remove_collection (
