@@ -20,7 +20,7 @@ module beast_collector::egg_generator {
 
     // collection name / info
     const EGG_COLLECTION_NAME:vector<u8> = b"W&W EGG";
-    const COLLECTION_DESCRIPTION:vector<u8> = b"Werewolf and witch beast collector game https://beast.werewolfandwitch.xyz/";
+    const COLLECTION_DESCRIPTION:vector<u8> = b"Eggs are the key to obtaining Beasts through hatching. There exists a diverse array of eggs, each representing a different species or variation. Rare eggs hold the promise of acquiring even rarer and more extraordinary Beasts. https://beast.werewolfandwitch.xyz/";
     
     const PROPERTY_RARITY: vector<u8> = b"W_RARITY"; // (Common(1) / Rare(2) / Epic (3))
 
