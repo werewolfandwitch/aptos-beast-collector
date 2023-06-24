@@ -105,5 +105,53 @@ module beast_collector::launchpad {
         event::emit_event(&mut launchpad.minted_events, MintedEvent { 
             minted_count: launchpad.minted_count,            
         });               
+    } 
+
+    entry fun bulk_mint<CoinType>(receiver: &signer, launchpad_address:address,trainer_generator:address, amount: u64) acquires LaunchPad {
+        let receiver_addr = signer::address_of(receiver);
+        let resource_signer = get_resource_account_cap(launchpad_address);
+        let coin_address = utils::coin_address<CoinType>();
+        assert!(coin_address == @war_coin || coin_address == @aptos_coin, error::permission_denied(ENOT_AUTHORIZED));
+        let is_war_coin = if(coin_address == @war_coin) { true } else { false };
+        let ind = 1;
+        assert!(amount > 1, error::permission_denied(ENOT_AUTHORIZED));
+        assert!(amount < 1000, error::permission_denied(ENOT_AUTHORIZED));
+        let launchpad = borrow_global_mut<LaunchPad>(launchpad_address);
+        assert!(timestamp::now_seconds() > launchpad.launchpad_public_open, ENOT_OPENED);
+        assert!(launchpad.minted_count <= launchpad.max_amount, EMAX_AMOUNT);
+        let price_to_pay = if(is_war_coin) { WAR_PRICE } else { APT_PRICE };
+        assert!(coin::balance<CoinType>(receiver_addr) >= price_to_pay, error::invalid_argument(ENO_SUFFICIENT_FUND));
+        let coins_to_pay = coin::withdraw<CoinType>(receiver, price_to_pay * amount);                
+        coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
+
+        while (ind <= amount) {
+            mint_trainer_native<CoinType>(receiver, launchpad_address, trainer_generator, ind);
+            ind = ind + 1;
+        };        
+    }
+
+    fun mint_trainer_native<CoinType>(receiver: &signer, launchpad_address:address, trainer_generator:address, index:u64) acquires LaunchPad {                                    
+        let receiver_addr = signer::address_of(receiver);
+        let resource_signer = get_resource_account_cap(launchpad_address);
+        let guid = account::create_guid(&resource_signer);
+        let uuid = guid::creation_num(&guid);
+        let random_idx = utils::random_with_nonce(receiver_addr, 1000, uuid + index) + 1;
+        let grade = if(random_idx < 800) { // 80%
+            1
+        } else if (random_idx >= 800 && random_idx < 930) { // 13%
+            2
+        } else if (random_idx >= 930 && random_idx < 970) { // 5%
+            3
+        } else if (random_idx >= 970 && random_idx < 990) { // 2%
+            4
+        } else {  // 1%
+            5
+        };  
+        let launchpad = borrow_global_mut<LaunchPad>(launchpad_address);
+        trainer_generator::mint_trainer(receiver, &resource_signer, trainer_generator, grade);
+        launchpad.minted_count = launchpad.minted_count + 1;         
+        event::emit_event(&mut launchpad.minted_events, MintedEvent { 
+            minted_count: launchpad.minted_count,            
+        });               
     }                     
 }
