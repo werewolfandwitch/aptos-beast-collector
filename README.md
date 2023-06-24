@@ -1,6 +1,6 @@
 # Werewolf and witch Aptos Beast Game
 
-- Werwolf and witch Beast Game (https://beast.werewolfandwitch.xyz/)
+- Werwolf and witch Beast Game[https://beast.werewolfandwitch.xyz/]
 
 
 License
