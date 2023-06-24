@@ -208,7 +208,7 @@ module beast_collector::beast_generator {
                 // we don't allow any mutation to the token
                 token::create_token_mutability_config(mutability_config),
                 // type
-                vector<String>[string::utf8(BURNABLE_BY_OWNER),string::utf8(TOKEN_PROPERTY_MUTABLE),
+                vector<String>[string::utf8(BURNABLE_BY_OWNER), string::utf8(BURNABLE_BY_CREATOR), string::utf8(TOKEN_PROPERTY_MUTABLE), 
                     string::utf8(BEAST_NUMBER),
                     string::utf8(BEAST_EXP),
                     string::utf8(BEAST_LEVEL),
@@ -218,7 +218,7 @@ module beast_collector::beast_generator {
                     string::utf8(BEAST_BREEDING_TIME),
                     string::utf8(BEAST_EVOLUTION_TIME)
                 ],  // property_keys                
-                vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&false),
+                vector<vector<u8>>[bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&true),bcs::to_bytes<bool>(&true),
                     bcs::to_bytes<u64>(&beast_number),
                     bcs::to_bytes<u64>(&0),
                     bcs::to_bytes<u64>(&1),
@@ -228,7 +228,7 @@ module beast_collector::beast_generator {
                     bcs::to_bytes<u64>(&timestamp::now_seconds()),
                     bcs::to_bytes<u64>(&timestamp::now_seconds()),
                 ],  // values 
-                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"),
+                vector<String>[string::utf8(b"bool"),string::utf8(b"bool"),string::utf8(b"bool"),
                     string::utf8(b"u64"),
                     string::utf8(b"u64"),
                     string::utf8(b"u64"),
@@ -274,10 +274,11 @@ module beast_collector::beast_generator {
         receiver: &signer, auth: &signer, beast_contract_address:address, token_id: TokenId, add_exp:u64,
     ) acquires BeastManager {  
         let auth_address = signer::address_of(auth);
+        let holder_addr = signer::address_of(receiver);
         let manager = borrow_global<BeastManager>(beast_contract_address);
         acl::assert_contains(&manager.acl, auth_address);                                   
         let resource_signer = get_resource_account_cap(beast_contract_address);                               
-        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        let pm = token::get_property_map(holder_addr, token_id);
         let level = property_map::read_u64(&pm, &string::utf8(BEAST_LEVEL));
         let exp = property_map::read_u64(&pm, &string::utf8(BEAST_EXP));
         exp = exp + add_exp;        
@@ -285,26 +286,26 @@ module beast_collector::beast_generator {
             exp = exp - 100;
             level = level + 1;
         };
-        token::mutate_one_token(            
-            &resource_signer,
-            signer::address_of(receiver),
-            token_id,            
-            vector<String>[                    
-                string::utf8(BEAST_LEVEL),
-                string::utf8(BEAST_EXP),
-                string::utf8(BEAST_DUNGEON_TIME)
-            ],  // property_keys                
-            vector<vector<u8>>[
-                bcs::to_bytes<u64>(&level),
-                bcs::to_bytes<u64>(&exp),
-                bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400))
-            ],  // values 
-            vector<String>[
-                string::utf8(b"u64"),
-                string::utf8(b"u64"),
-                string::utf8(b"u64")
-            ],      // type
-        );     
+        // token::mutate_one_token(            
+        //     &resource_signer,
+        //     holder_addr,
+        //     token_id,            
+        //     vector<String>[                    
+        //         string::utf8(BEAST_LEVEL),
+        //         string::utf8(BEAST_EXP),
+        //         string::utf8(BEAST_DUNGEON_TIME)
+        //     ],  // property_keys                
+        //     vector<vector<u8>>[
+        //         bcs::to_bytes<u64>(&level),
+        //         bcs::to_bytes<u64>(&exp),
+        //         bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400))
+        //     ],  // values 
+        //     vector<String>[
+        //         string::utf8(b"u64"),
+        //         string::utf8(b"u64"),
+        //         string::utf8(b"u64")
+        //     ],      // type
+        // );     
     }
 
     public fun evolve (

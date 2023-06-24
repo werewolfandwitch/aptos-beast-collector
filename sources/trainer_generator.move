@@ -243,16 +243,17 @@ module beast_collector::trainer_generator {
     entry fun upgrade (
         receiver: &signer, trainer_address:address, token_creator: address, trainer_token_name:String, property_version:u64
     ) acquires TrainerManager {  
-        let token_id = token::create_token_id_raw(token_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);                                                
+        let token_id = token::create_token_id_raw(token_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);
+        let holder_addr = signer::address_of(receiver);
         let resource_signer = get_resource_account_cap(trainer_address);                                
-        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        let pm = token::get_property_map(holder_addr, token_id);
         let level = property_map::read_u64(&pm, &string::utf8(PROPERTY_LEVEL));
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
         assert!(level == 5, error::permission_denied(ENOT_AUTHORIZED)); 
         assert!(grade < 6, error::permission_denied(ENOT_AUTHORIZED)); 
         token::mutate_one_token(            
             &resource_signer,
-            signer::address_of(receiver),
+            holder_addr,
             token_id,            
             vector<String>[
                 string::utf8(PROPERTY_LEVEL),
