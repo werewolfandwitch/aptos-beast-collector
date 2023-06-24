@@ -15,6 +15,7 @@ module beast_collector::beast_exploration {
     use aptos_framework::account;
 
     const ENOT_AUTHORIZED:u64 = 1;
+    const EREQUIRED_EVOLUTION: u64 = 2;
 
     const BEAST_COLLECTION_NAME:vector<u8> = b"W&W Beast";            
 
@@ -79,16 +80,18 @@ module beast_collector::beast_exploration {
         receiver: &signer, 
         beast_token_name:String, beast_token_creator:address, property_version:u64, 
         exporation_address:address) acquires Exploration {
+        let token_id = token::create_token_id_raw(@beast_creator,string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
+        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        let evo_stage = property_map::read_u64(&pm, &string::utf8(BEAST_EVO_STAGE));
+        assert!(evo_stage > 1, error::permission_denied(EREQUIRED_EVOLUTION));
         let resource_signer = get_resource_account_cap(exporation_address);
         let coin_address = utils::coin_address<WarCoinType>();
         assert!(coin_address == @war_coin, error::permission_denied(ENOT_AUTHORIZED));
         let price_to_pay = 100000000; // 1 WAR Coin
         let coins_to_pay = coin::withdraw<WarCoinType>(receiver, price_to_pay);                
         coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
-
-        let token_id = token::create_token_id_raw(@beast_creator,string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
-        let resource_signer = get_resource_account_cap(exporation_address);
-        let pm = token::get_property_map(signer::address_of(receiver), token_id);
+        
+        let resource_signer = get_resource_account_cap(exporation_address);        
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;
@@ -99,7 +102,7 @@ module beast_collector::beast_exploration {
         coin::deposit(signer::address_of(receiver), coins);
         
         // jackpot number = 777
-        let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 1000, uuid) + 1;
+        let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 100, uuid) + 1;
         if(random_idx == 777) {
             let coins = coin::withdraw<WarCoinType>(&resource_signer, 1000 * price_to_pay);                
             coin::deposit(signer::address_of(receiver), coins);
