@@ -392,7 +392,7 @@ module beast_collector::beast_generator {
         let game_events = borrow_global_mut<BeastManager>(beast_contract_address);               
         event::emit_event(&mut game_events.token_minting_events, MintedEvent {            
             minted_item: token_id,
-            owner: signer::address_of(sender),
+            owner: signer::address_of(receiver),
             generated_time: timestamp::now_seconds()
         });
 
