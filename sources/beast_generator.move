@@ -104,7 +104,7 @@ module beast_collector::beast_generator {
         acl::remove(&mut manager.acl, address_to_remove);        
     }    
     // resource cab required 
-    entry fun init<WarCoinType>(sender: &signer) acquires BeastManager{
+    entry fun init<WarCoinType>(sender: &signer) acquires BeastManager {
         let sender_addr = signer::address_of(sender);                
         let (resource_signer, signer_cap) = account::create_resource_account(sender, x"05");    
         token::initialize_token_store(&resource_signer);
@@ -282,29 +282,29 @@ module beast_collector::beast_generator {
         let exp = property_map::read_u64(&pm, &string::utf8(BEAST_EXP));
         exp = exp + add_exp;        
         if(exp > 100) {
-                exp = exp - 100;
-                level = level + 1;
-            };
-            token::mutate_one_token(            
-                &resource_signer,
-                signer::address_of(receiver),
-                token_id,            
-                vector<String>[                    
-                    string::utf8(BEAST_LEVEL),
-                    string::utf8(BEAST_EXP),
-                    string::utf8(BEAST_DUNGEON_TIME)
-                ],  // property_keys                
-                vector<vector<u8>>[
-                    bcs::to_bytes<u64>(&level),
-                    bcs::to_bytes<u64>(&exp),
-                    bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400))
-                ],  // values 
-                vector<String>[
-                    string::utf8(b"u64"),
-                    string::utf8(b"u64"),
-                    string::utf8(b"u64")
-                ],      // type
-            );     
+            exp = exp - 100;
+            level = level + 1;
+        };
+        token::mutate_one_token(            
+            &resource_signer,
+            signer::address_of(receiver),
+            token_id,            
+            vector<String>[                    
+                string::utf8(BEAST_LEVEL),
+                string::utf8(BEAST_EXP),
+                string::utf8(BEAST_DUNGEON_TIME)
+            ],  // property_keys                
+            vector<vector<u8>>[
+                bcs::to_bytes<u64>(&level),
+                bcs::to_bytes<u64>(&exp),
+                bcs::to_bytes<u64>(&(timestamp::now_seconds() + 86400))
+            ],  // values 
+            vector<String>[
+                string::utf8(b"u64"),
+                string::utf8(b"u64"),
+                string::utf8(b"u64")
+            ],      // type
+        );     
     }
 
     public fun evolve (
