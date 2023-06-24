@@ -8,7 +8,8 @@ module beast_collector::breeding {
     use aptos_framework::coin::{Self};           
     use aptos_token::property_map::{Self};
     use aptos_token::token::{Self}; 
-    use aptos_framework::account;    
+    use aptos_framework::account;
+    use beast_collector::utils;        
 
     use beast_collector::beast_generator;       
     use beast_collector::egg_generator::{Self};    
@@ -47,7 +48,7 @@ module beast_collector::breeding {
         
     } 
     
-    entry fun breeding(
+    entry fun breeding<WarCoinType>(
         holder: &signer, breed_address: address,
         token_name_1:String, property_version_1:u64,
         token_name_2:String, property_version_2:u64
@@ -59,6 +60,12 @@ module beast_collector::breeding {
         let pm2 = token::get_property_map(signer::address_of(holder), token_id_2);        
         let breed_expired_time_1 = property_map::read_u64(&pm, &string::utf8(BEAST_BREEDING_TIME));
         let breed_expired_time_2 = property_map::read_u64(&pm2, &string::utf8(BEAST_BREEDING_TIME));
+        
+        let coin_address = utils::coin_address<WarCoinType>();
+        assert!(coin_address == @war_coin, error::permission_denied(ENOT_AUTHORIZED));
+        let price_to_pay = 1000000000; // 10 WAR Coin
+        let coins_to_pay = coin::withdraw<WarCoinType>(holder, price_to_pay);
+        coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
 
         let rarity_1 = property_map::read_u64(&pm, &string::utf8(BEAST_RARITY));
         let rarity_2 = property_map::read_u64(&pm2, &string::utf8(BEAST_RARITY));
