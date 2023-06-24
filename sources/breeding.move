@@ -5,12 +5,10 @@ module beast_collector::breeding {
     use std::error;
     use std::string::{Self, String}; 
     use aptos_framework::timestamp;    
-    use aptos_framework::coin::{Self};       
-    use aptos_framework::event::{Self};        
+    use aptos_framework::coin::{Self};           
     use aptos_token::property_map::{Self};
     use aptos_token::token::{Self}; 
     use aptos_framework::account;    
-    use aptos_framework::guid;
 
     use beast_collector::beast_generator;       
     use beast_collector::egg_generator::{Self};    
@@ -40,7 +38,7 @@ module beast_collector::breeding {
 
     entry fun init(sender: &signer) {
         let sender_addr = signer::address_of(sender);                
-        let (resource_signer, signer_cap) = account::create_resource_account(sender, x"07");        
+        let (_resource_signer, signer_cap) = account::create_resource_account(sender, x"07");        
         if(!exists<Breeding>(sender_addr)){            
             move_to(sender, Breeding {                
                 signer_cap,                
@@ -54,8 +52,7 @@ module beast_collector::breeding {
         token_name_1:String, property_version_1:u64,
         token_name_2:String, property_version_2:u64
     ) acquires Breeding {        
-        let resource_signer = get_resource_account_cap(breed_address);                
-        let resource_account_address = signer::address_of(&resource_signer);
+        let resource_signer = get_resource_account_cap(breed_address);                        
         let token_id_1 = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name_1, property_version_1);        
         let token_id_2 = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), token_name_2, property_version_2);        
         let pm = token::get_property_map(signer::address_of(holder), token_id_1);        

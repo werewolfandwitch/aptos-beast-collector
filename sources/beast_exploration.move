@@ -3,10 +3,8 @@ module beast_collector::beast_exploration {
     use std::error;
     use aptos_framework::coin::{Self};
     use aptos_framework::timestamp;
-    use beast_collector::utils;
-    use beast_collector::trainer_generator;
+    use beast_collector::utils;    
     use beast_collector::beast_generator;    
-    use beast_collector::egg_generator;
     use std::signer;    
     use std::string::{Self, String};    
     use aptos_token::token::{Self};     
@@ -62,7 +60,7 @@ module beast_collector::beast_exploration {
     }   
 
     entry fun beast_exploration(
-        receiver: &signer, beast_token_name: String, beast_token_creator:address, property_version:u64, exporation_address:address,
+        receiver: &signer, beast_token_name: String, _beast_token_creator:address, property_version:u64, exporation_address:address,
         ) acquires Exploration {
         let token_id = token::create_token_id_raw(@beast_creator, string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
@@ -72,13 +70,13 @@ module beast_collector::beast_exploration {
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;                            
         // TODO change it before deployment        
         let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));
-        // assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
+        assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
         beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address, token_id, random_exp);
     }
 
     entry fun beast_exploration_2<WarCoinType>(
         receiver: &signer, 
-        beast_token_name:String, beast_token_creator:address, property_version:u64, 
+        beast_token_name:String, _beast_token_creator:address, property_version:u64, 
         exporation_address:address) acquires Exploration {
         let token_id = token::create_token_id_raw(@beast_creator,string::utf8(BEAST_COLLECTION_NAME), beast_token_name, property_version);        
         let pm = token::get_property_map(signer::address_of(receiver), token_id);

@@ -3,8 +3,7 @@ module beast_collector::hatch {
     
     use std::signer;    
     use std::error;    
-    use aptos_framework::coin::{Self};    
-    use aptos_framework::event::{Self};        
+    use aptos_framework::coin::{Self};        
     use aptos_framework::account;    
     use aptos_framework::guid;
     use std::string::{Self, String};    
@@ -49,8 +48,7 @@ module beast_collector::hatch {
     entry fun hatch (
         receiver: &signer, hatch_address:address, egg_token_name:String, egg_creator:address, property_version:u64
     ) acquires Hatch {                  
-        assert!(egg_creator == @egg_creator, error::permission_denied(ENOT_AUTHORIZED));
-        let receiver_addr = signer::address_of(receiver);
+        assert!(egg_creator == @egg_creator, error::permission_denied(ENOT_AUTHORIZED));        
         let resource_signer = get_resource_account_cap(hatch_address);
         let token_id = token::create_token_id_raw(egg_creator, string::utf8(EGG_COLLECTION_NAME), egg_token_name, property_version);        
         let pm = token::get_property_map(signer::address_of(receiver), token_id);        
