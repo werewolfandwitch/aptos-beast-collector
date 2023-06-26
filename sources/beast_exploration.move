@@ -110,8 +110,7 @@ module beast_collector::beast_exploration {
         let resource_signer = get_resource_account_cap(exporation_address);        
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
-        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;
-        beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address, token_id, random_exp);        
+        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;        
         // earning
         let earned = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
         let coins = coin::withdraw<WarCoinType>(&resource_signer, earned * price_to_pay);                
@@ -130,6 +129,7 @@ module beast_collector::beast_exploration {
 
         let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));        
         assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
+        beast_generator::add_exp(receiver, &resource_signer, @beast_gen_address, token_id, random_exp);        
 
     }
 }
