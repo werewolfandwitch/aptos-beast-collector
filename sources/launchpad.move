@@ -118,7 +118,7 @@ module beast_collector::launchpad {
         assert!(amount < 1000, error::permission_denied(ENOT_AUTHORIZED));
         let launchpad = borrow_global_mut<LaunchPad>(launchpad_address);
         assert!(timestamp::now_seconds() > launchpad.launchpad_public_open, ENOT_OPENED);
-        assert!(launchpad.minted_count <= launchpad.max_amount, EMAX_AMOUNT);
+        assert!(launchpad.minted_count + amount <= launchpad.max_amount, EMAX_AMOUNT);
         let price_to_pay = if(is_war_coin) { WAR_PRICE } else { APT_PRICE };
         assert!(coin::balance<CoinType>(receiver_addr) >= price_to_pay * amount, error::invalid_argument(ENO_SUFFICIENT_FUND));
         let coins_to_pay = coin::withdraw<CoinType>(receiver, price_to_pay * amount);                
