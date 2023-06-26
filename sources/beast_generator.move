@@ -191,7 +191,7 @@ module beast_collector::beast_generator {
             token::create_collection(&resource_signer, 
                 string::utf8(BEAST_COLLECTION_NAME), 
                 string::utf8(COLLECTION_DESCRIPTION), 
-                collection_uri, 99999, mutate_setting);        
+                collection_uri, 999999, mutate_setting);        
         };
         let collection = borrow_global_mut<BeastCollection>(beast_contract_address);
         let evolution_struct = table::borrow(&collection.collections, beast_number);        
