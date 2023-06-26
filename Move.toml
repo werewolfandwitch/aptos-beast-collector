@@ -10,11 +10,11 @@ AptosToken = { git = "https://github.com/aptos-labs/aptos-core.git", subdir="apt
 [addresses]
 beast_collector ="_"
 war_coin="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a"
-egg_creator="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a" # resource account
-beast_creator="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a"  # resource account
-trainer_creator="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a"  # resource account
-beast_gen_address="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a" # contract address
-egg_gen_address="0x52ab49a4039c3d2b0aa6e0a00aaed75dcff72a3120ba3610f62d1d0b6032345a" # contract address
+egg_creator="0x7a370c1993c5517868b93004f1f72853160e758fa30de2edfec2574237bf9a83" # resource account
+beast_creator="0xd2c3b86a43bd2d3dcb3c27f9360f714124405f93af5fdb94210f42aff3ce79ff"  # resource account
+trainer_creator="0xcf2d3d6e933f23bf9e2d27961be088370b1787db05324d5ccbe12eb776952f27"  # resource account
+beast_gen_address="0x55f710b0b0330e060c41f731ffdd61b846910576bacd0a87be9fd37172012e08" # contract address
+egg_gen_address="0x55f710b0b0330e060c41f731ffdd61b846910576bacd0a87be9fd37172012e08" # contract address
 aptos_coin="0x1"
 aptos_framework="0x1"
 aptos_std="0x1"
