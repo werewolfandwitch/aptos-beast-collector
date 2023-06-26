@@ -10,7 +10,9 @@ module beast_collector::beast_generator {
     use aptos_framework::event::{Self, EventHandle};    
     use aptos_framework::timestamp;
     use aptos_framework::account;        
-    use beast_collector::acl::{Self};        
+    use beast_collector::acl::{Self};       
+    use beast_collector::utils; 
+    use std::option::{Self};    
 
     const BURNABLE_BY_CREATOR: vector<u8> = b"TOKEN_BURNABLE_BY_CREATOR";    
     const BURNABLE_BY_OWNER: vector<u8> = b"TOKEN_BURNABLE_BY_OWNER";
@@ -192,19 +194,33 @@ module beast_collector::beast_generator {
                 collection_uri, 99999, mutate_setting);        
         };
         let collection = borrow_global_mut<BeastCollection>(beast_contract_address);
-        let evolution_struct = table::borrow(&collection.collections, beast_number);
+        let evolution_struct = table::borrow(&collection.collections, beast_number);        
+
+        let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(BEAST_COLLECTION_NAME));        
+        let new_supply = option::extract<u64>(supply_count);                        
+        let i = 0;
         let token_name = evolution_struct.stage_name_1;
+        while (i <= new_supply) {
+            let new_token_name = token_name;
+            string::append_utf8(&mut new_token_name, b" #");
+            let count_string = utils::to_string((i as u128));
+            string::append(&mut new_token_name, count_string);                                
+            if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_token_name)) {
+                token_name = new_token_name;                
+                break
+            };
+            i = i + 1;
+        };
         let token_uri = evolution_struct.stage_uri_1;
         let rarity = evolution_struct.rarity;
         let story = evolution_struct.story;        
         let token_data_id;
-        if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), token_name)) {
-            token_data_id = token::create_tokendata(
+        token_data_id = token::create_tokendata(
                 &resource_signer,
                 string::utf8(BEAST_COLLECTION_NAME),
                 token_name,
                 story,
-                999999, 
+                1, 
                 token_uri,
                 beast_contract_address, // royalty fee to                
                 FEE_DENOMINATOR,
@@ -242,10 +258,7 @@ module beast_collector::beast_generator {
                     string::utf8(b"u64"),
                     string::utf8(b"u64"),                    
                 ],
-            );            
-        } else {
-            token_data_id = token::create_token_data_id(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), token_name);                    
-        };
+            );
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(sender, true);
         token::direct_transfer(&resource_signer, sender, token_id, 1);        
@@ -349,16 +362,28 @@ module beast_collector::beast_generator {
             new_name = evolution_struct.stage_name_3;
             new_uri = evolution_struct.stage_uri_3;        
         };   
-        // burn and new token
+        let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(BEAST_COLLECTION_NAME));        
+        let new_supply = option::extract<u64>(supply_count);                        
+        let i = 0;
+        let token_name = new_name;
+        while (i <= new_supply) {
+            let new_token_name = token_name;
+            string::append_utf8(&mut new_token_name, b" #");
+            let count_string = utils::to_string((i as u128));
+            string::append(&mut new_token_name, count_string);                                
+            if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_token_name)) {
+                token_name = new_token_name;                
+                break
+            };
+            i = i + 1;
+        };
         let mutability_config = &vector<bool>[ true, true, true, true, true ];
-        let token_data_id;
-        if(!token::check_tokendata_exists(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_name)) {
-            token_data_id = token::create_tokendata(
+        let token_data_id = token::create_tokendata(
                 &resource_signer,
                 string::utf8(BEAST_COLLECTION_NAME),
-                new_name,
+                token_name,
                 story,
-                999999, 
+                1, 
                 new_uri,
                 beast_contract_address, // royalty fee to                
                 FEE_DENOMINATOR,
@@ -396,10 +421,7 @@ module beast_collector::beast_generator {
                     string::utf8(b"u64"),
                     string::utf8(b"u64"),                    
                 ],
-            );            
-        } else {
-            token_data_id = token::create_token_data_id(resource_account_address, string::utf8(BEAST_COLLECTION_NAME), new_name);                    
-        };
+            );
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(receiver, true);
         token::direct_transfer(&resource_signer, receiver, token_id, 1); 

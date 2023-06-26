@@ -139,11 +139,7 @@ module beast_collector::trainer_generator {
         let idx_string = utils::to_string((random_idx as u128));
         let uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/");         
         string::append(&mut uri, idx_string);
-        string::append_utf8(&mut uri, b".png");
-        // const PROPERTY_EXP: vector<u8> = b"W_EXP"; // 100 MAX, 100 EXP => 1 LEVEL UP
-        // const PROPERTY_LEVEL: vector<u8> = b"W_LEVEL"; // 5 LEVEL MAX, 5 LEVEL with 100 EXP can upgrade GRADE of trainer
-        // const PROPERTY_NEXT_EXPLORATION_TIME: vector<u8> = b"W_NEXT_EXPLORATION_TIME";
-        // const PROPERTY_GRADE: vector<u8> = b"W_GRADE"; // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
+        string::append_utf8(&mut uri, b".png");        
         let token_data_id = token::create_tokendata(
                 &resource_signer,
                 string::utf8(TRAINER_COLLECTION_NAME),
