@@ -139,7 +139,7 @@ module beast_collector::beast_generator {
         let mutate_setting = vector<bool>[ true, true, true ]; // TODO should check before deployment.
         let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/beast/1.png");
         token::create_collection(&resource_signer, string::utf8(BEAST_COLLECTION_NAME), 
-            string::utf8(COLLECTION_DESCRIPTION), collection_uri, 99999, mutate_setting);                
+            string::utf8(COLLECTION_DESCRIPTION), collection_uri, 999999, mutate_setting);                
         
         let manager = borrow_global_mut<BeastManager>(sender_addr);
         acl::add(&mut manager.acl, sender_addr);              
