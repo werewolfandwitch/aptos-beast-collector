@@ -211,7 +211,7 @@ module beast_collector::trainer_generator {
         let level = property_map::read_u64(&pm, &string::utf8(PROPERTY_LEVEL));
         let exp = property_map::read_u64(&pm, &string::utf8(PROPERTY_EXP));
         exp = exp + add_exp;
-        assert!(level < 5, error::permission_denied(ENOT_AUTHORIZED)); 
+        // assert!(level < 5, error::permission_denied(ENOT_AUTHORIZED)); 
         if(level < 5) {
             if(exp > 100) {
                 exp = exp - 100;
@@ -249,7 +249,7 @@ module beast_collector::trainer_generator {
         let pm = token::get_property_map(holder_addr, token_id);
         let level = property_map::read_u64(&pm, &string::utf8(PROPERTY_LEVEL));
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
-        assert!(level == 5, error::permission_denied(ENOT_AUTHORIZED)); 
+        assert!(level > 4,error::permission_denied(ENOT_AUTHORIZED));        
         assert!(grade < 6, error::permission_denied(ENOT_AUTHORIZED)); 
         token::mutate_one_token(            
             &resource_signer,
