@@ -9,14 +9,11 @@ module beast_collector::hatch {
     use std::string::{Self, String};    
     use aptos_token::token::{Self};     
     use aptos_token::property_map::{Self};    
-
     use beast_collector::utils;    
     use beast_collector::beast_generator;
 
     const ENOT_AUTHORIZED:u64 = 0;    
-
     const EGG_COLLECTION_NAME:vector<u8> = b"W&W EGG";
-
     const PROPERTY_RARITY: vector<u8> = b"W_RARITY"; // (Common(1) / Rare(2) / Epic (3))
 
     struct Hatch has store, key {          
