@@ -44,6 +44,7 @@ module beast_collector::trainer_exploration {
     entry fun trainer_exploration<CoinType>(receiver: &signer, 
         trainer_token_name:String, trainer_creator:address, property_version:u64, exporation_address:address, egg_contract:address, 
         trainer_contract:address) acquires Exploration {
+        assert!(trainer_creator == @trainer_creator, error::permission_denied(ENOT_AUTHORIZED));
         let token_id = token::create_token_id_raw(trainer_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
         let pm = token::get_property_map(signer::address_of(receiver), token_id);        
@@ -67,13 +68,14 @@ module beast_collector::trainer_exploration {
         let uuid = guid::creation_num(&guid);        
         let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 100, uuid) + 1;
         if(random_idx < percentage) {
-            // get egg receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64
-            let random_rarity = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
+            // get egg receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64            
             let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid + 1) + 1;
             let i = 0;
             while(i < random_eggcount) {
+                let uuid2 = guid::creation_num(&guid);
+                let random_rarity = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid2) + 1;
                 egg_generator::mint_egg(receiver, &resource_signer, egg_contract, random_rarity); 
-                i = i + 1;
+                i = i + 1;                
             }
         };
                 
@@ -88,6 +90,7 @@ module beast_collector::trainer_exploration {
     entry fun trainer_exploration_2<CoinType>(receiver: &signer, 
         trainer_token_name:String, trainer_creator:address, property_version:u64, exporation_address:address, egg_contract:address, 
         trainer_contract:address) acquires Exploration {
+        assert!(trainer_creator == @trainer_creator, error::permission_denied(ENOT_AUTHORIZED));        
         let token_id = token::create_token_id_raw(trainer_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
 
@@ -113,10 +116,12 @@ module beast_collector::trainer_exploration {
         let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 100, uuid) + 1;
         if(random_idx < percentage) {
             // get egg receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64
-            let random_rarity = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid) + 1;
+            
             let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 5, uuid + 1) + 1;
             let i = 0;
             while(i < random_eggcount) {
+                let uuid2 = guid::creation_num(&guid);
+                let random_rarity = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid2) + 1;
                 egg_generator::mint_egg(receiver,&resource_signer, egg_contract, random_rarity); 
                 i = i + 1;
             }

@@ -22,7 +22,7 @@ module beast_collector::trainer_generator {
     
     // collection name / info
     const TRAINER_COLLECTION_NAME:vector<u8> = b"W&W Beast Collector";
-    const COLLECTION_DESCRIPTION:vector<u8> = b"Beast Collector takes on the mission of protecting rare Beasts that are vanishing amidst the war between werewolves and witches. They embark on daring expeditions to gather eggs and train the Beasts to help them thrive. Through the unique abilities of the Beast Collectors, these extraordinary creatures can undergo remarkable evolutions. https://beast.werewolfandwitch.xyz/";
+    const COLLECTION_DESCRIPTION:vector<u8> = b"https://beast.werewolfandwitch.xyz/ / Beast Collector takes on the mission of protecting rare Beasts that are vanishing amidst the war between werewolves and witches. They embark on daring expeditions to gather eggs and train the Beasts to help them thrive. Through the unique abilities of the Beast Collectors, these extraordinary creatures can undergo remarkable evolutions.";
     // item property
     
     const PROPERTY_EXP: vector<u8> = b"W_EXP"; // 100 MAX, 100 EXP => 1 LEVEL UP
@@ -139,11 +139,7 @@ module beast_collector::trainer_generator {
         let idx_string = utils::to_string((random_idx as u128));
         let uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/");         
         string::append(&mut uri, idx_string);
-        string::append_utf8(&mut uri, b".png");
-        // const PROPERTY_EXP: vector<u8> = b"W_EXP"; // 100 MAX, 100 EXP => 1 LEVEL UP
-        // const PROPERTY_LEVEL: vector<u8> = b"W_LEVEL"; // 5 LEVEL MAX, 5 LEVEL with 100 EXP can upgrade GRADE of trainer
-        // const PROPERTY_NEXT_EXPLORATION_TIME: vector<u8> = b"W_NEXT_EXPLORATION_TIME";
-        // const PROPERTY_GRADE: vector<u8> = b"W_GRADE"; // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
+        string::append_utf8(&mut uri, b".png");        
         let token_data_id = token::create_tokendata(
                 &resource_signer,
                 string::utf8(TRAINER_COLLECTION_NAME),
@@ -210,8 +206,7 @@ module beast_collector::trainer_generator {
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         let level = property_map::read_u64(&pm, &string::utf8(PROPERTY_LEVEL));
         let exp = property_map::read_u64(&pm, &string::utf8(PROPERTY_EXP));
-        exp = exp + add_exp;
-        // assert!(level < 5, error::permission_denied(ENOT_AUTHORIZED)); 
+        exp = exp + add_exp;        
         if(level < 5) {
             if(exp > 100) {
                 exp = exp - 100;
@@ -243,6 +238,7 @@ module beast_collector::trainer_generator {
     entry fun upgrade (
         receiver: &signer, trainer_address:address, token_creator: address, trainer_token_name:String, property_version:u64
     ) acquires TrainerManager {  
+        assert!(token_creator == @trainer_creator, error::permission_denied(ENOT_AUTHORIZED));        
         let token_id = token::create_token_id_raw(token_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);
         let holder_addr = signer::address_of(receiver);
         let resource_signer = get_resource_account_cap(trainer_address);                                

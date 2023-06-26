@@ -114,8 +114,7 @@ module beast_collector::launchpad {
         assert!(coin_address == @war_coin || coin_address == @aptos_coin, error::permission_denied(ENOT_AUTHORIZED));
         let is_war_coin = if(coin_address == @war_coin) { true } else { false };
         let ind = 1;
-        assert!(amount > 1, error::permission_denied(ENOT_AUTHORIZED));
-        assert!(amount < 1000, error::permission_denied(ENOT_AUTHORIZED));
+        assert!(amount > 1 && amount < 101, error::permission_denied(ENOT_AUTHORIZED));        
         let launchpad = borrow_global_mut<LaunchPad>(launchpad_address);
         assert!(timestamp::now_seconds() > launchpad.launchpad_public_open, ENOT_OPENED);
         assert!(launchpad.minted_count + amount <= launchpad.max_amount, EMAX_AMOUNT);
@@ -123,7 +122,6 @@ module beast_collector::launchpad {
         assert!(coin::balance<CoinType>(receiver_addr) >= price_to_pay * amount, error::invalid_argument(ENO_SUFFICIENT_FUND));
         let coins_to_pay = coin::withdraw<CoinType>(receiver, price_to_pay * amount);                
         coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
-
         while (ind <= amount) {
             mint_trainer_native<CoinType>(receiver, launchpad_address, trainer_generator, ind);
             ind = ind + 1;
