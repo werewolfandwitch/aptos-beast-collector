@@ -94,9 +94,7 @@ module beast_collector::hatch {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_mythic(hatch_address));
         } else {
             beast_generator::mint_beast(receiver, auth, @beast_gen_address, get_range_very_common(hatch_address));       
-        }
-        
-
+        }        
     }
     
     fun mint_egg_rare (receiver: &signer, auth: &signer, hatch_address:address) acquires Hatch {           
