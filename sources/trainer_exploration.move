@@ -44,6 +44,7 @@ module beast_collector::trainer_exploration {
     entry fun trainer_exploration<CoinType>(receiver: &signer, 
         trainer_token_name:String, trainer_creator:address, property_version:u64, exporation_address:address, egg_contract:address, 
         trainer_contract:address) acquires Exploration {
+        assert!(trainer_creator == @trainer_creator, error::permission_denied(ENOT_AUTHORIZED));
         let token_id = token::create_token_id_raw(trainer_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
         let pm = token::get_property_map(signer::address_of(receiver), token_id);        
@@ -89,6 +90,7 @@ module beast_collector::trainer_exploration {
     entry fun trainer_exploration_2<CoinType>(receiver: &signer, 
         trainer_token_name:String, trainer_creator:address, property_version:u64, exporation_address:address, egg_contract:address, 
         trainer_contract:address) acquires Exploration {
+        assert!(trainer_creator == @trainer_creator, error::permission_denied(ENOT_AUTHORIZED));        
         let token_id = token::create_token_id_raw(trainer_creator, string::utf8(TRAINER_COLLECTION_NAME), trainer_token_name, property_version);        
         let resource_signer = get_resource_account_cap(exporation_address);
 
