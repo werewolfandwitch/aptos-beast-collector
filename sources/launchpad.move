@@ -122,7 +122,6 @@ module beast_collector::launchpad {
         assert!(coin::balance<CoinType>(receiver_addr) >= price_to_pay * amount, error::invalid_argument(ENO_SUFFICIENT_FUND));
         let coins_to_pay = coin::withdraw<CoinType>(receiver, price_to_pay * amount);                
         coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
-
         while (ind <= amount) {
             mint_trainer_native<CoinType>(receiver, launchpad_address, trainer_generator, ind);
             ind = ind + 1;
