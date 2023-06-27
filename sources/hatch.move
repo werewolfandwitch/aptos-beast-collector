@@ -190,8 +190,8 @@ module beast_collector::hatch {
     }
 
     fun get_range_legendary (hatch_address:address) : u64 acquires Hatch {           
-        // beast idx  568-571
-        let total_count_idx = 4;
+        // beast idx  568-572
+        let total_count_idx = 5;
         let start_idx = 568;
         get_random_with_idx(total_count_idx,start_idx,hatch_address)        
     }
