@@ -76,7 +76,7 @@ module beast_collector::trainer_exploration {
             let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 3, uuid + 1) + 1;
             let i = 0;
             while(i < random_eggcount) {
-                let random_rarity = utils::random_with_nonce(signer::address_of(&resource_signer), 3, i + 1) + 1;
+                let random_rarity = utils::random_with_nonce(signer::address_of(receiver), 3, i + 1) + 1;
                 egg_generator::mint_egg(receiver, &resource_signer, egg_contract, random_rarity); 
                 i = i + 1;                
             }
@@ -118,7 +118,7 @@ module beast_collector::trainer_exploration {
             let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 5, uuid + 1) + 1;
             let i = 0;
             while(i < random_eggcount) {                
-                let random_rarity = utils::random_with_nonce(signer::address_of(&resource_signer), 3, i + 1) + 1;
+                let random_rarity = utils::random_with_nonce(signer::address_of(receiver), 3, i + 1) + 1;
                 egg_generator::mint_egg(receiver,&resource_signer, egg_contract, random_rarity); 
                 i = i + 1;
             }
