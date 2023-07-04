@@ -97,6 +97,8 @@ module beast_collector::trainer_exploration {
         let pm = token::get_property_map(signer::address_of(receiver), token_id);
         
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
+        let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
+        assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
         assert!(grade > 2 && grade < 6, error::permission_denied(ENOT_AUTHORIZED));
         let percentage = if(grade == 1) {
             65
@@ -127,9 +129,7 @@ module beast_collector::trainer_exploration {
                 i = i + 1;
             }
         };
-                
-        let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
-        assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
+                        
 
         // extend time and add exp
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
