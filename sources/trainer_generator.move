@@ -116,8 +116,7 @@ module beast_collector::trainer_generator {
             let mutate_setting = vector<bool>[ true, true, true ]; 
             let collection_uri = string::utf8(b"https://werewolfandwitch-beast-collection.s3.ap-northeast-2.amazonaws.com/trainer/1.png");
             token::create_collection(&resource_signer, string::utf8(TRAINER_COLLECTION_NAME), string::utf8(COLLECTION_DESCRIPTION), collection_uri, 99999, mutate_setting);        
-        };
-        
+        };        
         let supply_count = &mut token::get_collection_supply(resource_account_address, string::utf8(TRAINER_COLLECTION_NAME));        
         let new_supply = option::extract<u64>(supply_count);                        
         let i = 0;
@@ -172,7 +171,7 @@ module beast_collector::trainer_generator {
         );
         let token_id = token::mint_token(&resource_signer, token_data_id, 1);
         token::opt_in_direct_transfer(receiver, true);
-        token::direct_transfer(&resource_signer, receiver, token_id, 1);        
+        token::direct_transfer(&resource_signer, receiver, token_id, 1);
     }
 
     public fun extend_exploration_time (
