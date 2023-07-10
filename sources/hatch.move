@@ -160,8 +160,8 @@ module beast_collector::hatch {
     }
 
     fun get_range_common (hatch_address:address) : u64 acquires Hatch {           
-        // beast idx  143 - 154
-        let total_count_idx = 12;
+        // beast idx  143 - 158
+        let total_count_idx = 16;
         let start_idx = 143;       
         get_random_with_idx(total_count_idx,start_idx,hatch_address) 
     }
