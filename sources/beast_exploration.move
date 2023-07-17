@@ -85,7 +85,7 @@ module beast_collector::beast_exploration {
         let uuid = guid::creation_num(&guid);        
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;                                     
 
-        let coins = coin::withdraw<WarCoinType>(&resource_signer, 10000000); // 0.1 WAR
+        let coins = coin::withdraw<WarCoinType>(&resource_signer, 50000000); // 0.5 WAR
         coin::deposit(signer::address_of(receiver), coins);        
         let ex_time = property_map::read_u64(&pm, &string::utf8(BEAST_DUNGEON_TIME));
         assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
