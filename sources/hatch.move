@@ -167,24 +167,24 @@ module beast_collector::hatch {
     }
 
     fun get_range_rare (hatch_address:address) : u64 acquires Hatch {           
-        // beast idx  255-260
-        let total_count_idx = 6;
+        // beast idx  255-263
+        let total_count_idx = 9;
         let start_idx = 255;
 
         get_random_with_idx(total_count_idx,start_idx, hatch_address)
     }
 
     fun get_range_very_rare (hatch_address:address) : u64 acquires Hatch {           
-        // beast idx  361-365
-        let total_count_idx = 5;
+        // beast idx  361-367
+        let total_count_idx = 7;
         let start_idx = 361;
 
         get_random_with_idx(total_count_idx,start_idx, hatch_address)
     }
 
     fun get_range_epic (hatch_address:address) : u64 acquires Hatch {           
-        // beast idx  465-468
-        let total_count_idx = 4;
+        // beast idx  465-469
+        let total_count_idx = 5;
         let start_idx = 465;
         get_random_with_idx(total_count_idx,start_idx, hatch_address)
     }
