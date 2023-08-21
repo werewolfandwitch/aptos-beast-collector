@@ -51,8 +51,8 @@ module beast_collector::trainer_exploration {
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
         let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
         assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
-        assert!(grade < 6 && grade > 0, error::permission_denied(ENOT_AUTHORIZED));
-        // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) 
+        assert!(grade < 7 && grade > 0, error::permission_denied(ENOT_AUTHORIZED));
+        // Trainer(1) / Pro Trainer(2) / Semi champion(3) / World champion(4) / Master (5) / OneMore (6)
         let percentage = if(grade == 1) {
             65
         } else if (grade == 2) {
@@ -63,6 +63,8 @@ module beast_collector::trainer_exploration {
             80
         } else if (grade == 5){
             85
+        } else if (grade == 6){
+            90 // OneMore made 1 grade 6 trainer by accident
         } else {
             10
         };
@@ -95,7 +97,7 @@ module beast_collector::trainer_exploration {
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
         let ex_time = property_map::read_u64(&pm, &string::utf8(PROPERTY_NEXT_EXPLORATION_TIME));
         assert!(ex_time < timestamp::now_seconds(), error::permission_denied(ENOT_AUTHORIZED));
-        assert!(grade > 2 && grade < 6, error::permission_denied(ENOT_AUTHORIZED));
+        assert!(grade > 2 && grade < 7, error::permission_denied(ENOT_AUTHORIZED));
         let percentage = if(grade == 1) {
             65
         } else if (grade == 2) {
@@ -106,6 +108,8 @@ module beast_collector::trainer_exploration {
             80
         } else if (grade == 5) {
             85
+        } else if (grade == 6) {
+            90 // OneMore made 1 grade 6 trainer by accident
         } else {
             30
         };

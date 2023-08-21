@@ -245,7 +245,7 @@ module beast_collector::trainer_generator {
         let level = property_map::read_u64(&pm, &string::utf8(PROPERTY_LEVEL));
         let grade = property_map::read_u64(&pm, &string::utf8(PROPERTY_GRADE));
         assert!(level > 4,error::permission_denied(ENOT_AUTHORIZED));        
-        assert!(grade < 6, error::permission_denied(ENOT_AUTHORIZED)); 
+        assert!(grade < 5, error::permission_denied(ENOT_AUTHORIZED)); 
         token::mutate_one_token(            
             &resource_signer,
             holder_addr,
