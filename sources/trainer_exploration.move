@@ -71,8 +71,10 @@ module beast_collector::trainer_exploration {
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
         let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 100, uuid) + 1;
-        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
-        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);                
+        if (grade < 5) {
+            let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
+            trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);
+        };
         if(random_idx < percentage) {
             // get egg receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64            
             let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 2, uuid + 2) + 1;
@@ -116,8 +118,10 @@ module beast_collector::trainer_exploration {
         let guid = account::create_guid(&resource_signer);        
         let uuid = guid::creation_num(&guid);        
         let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 100, uuid) + 1;
-        let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
-        trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);                          
+        if (grade < 5) {
+            let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
+            trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);
+        };
         if(random_idx < percentage) {                        
             let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 5, uuid + 2) + 1;
             let i = 0;
