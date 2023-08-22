@@ -74,6 +74,8 @@ module beast_collector::trainer_exploration {
         if (grade < 5) {
             let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
             trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);
+        } else {
+            trainer_generator::extend_exploration_time(receiver, &resource_signer, trainer_contract, token_id);
         };
         if(random_idx < percentage) {
             // get egg receiver: &signer, auth: &signer, minter_address:address, token_name:String, egg_type: u64            
@@ -121,6 +123,8 @@ module beast_collector::trainer_exploration {
         if (grade < 5) {
             let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 20, uuid + 1) + 1;
             trainer_generator::add_exp(receiver, &resource_signer, trainer_contract, token_id, random_exp);
+        } else {
+            trainer_generator::extend_exploration_time(receiver, &resource_signer, trainer_contract, token_id);
         };
         if(random_idx < percentage) {                        
             let random_eggcount = utils::random_with_nonce(signer::address_of(&resource_signer), 5, uuid + 2) + 1;
