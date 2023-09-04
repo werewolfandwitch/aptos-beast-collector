@@ -9,7 +9,7 @@ The expansion game of Werewolf and Witch, called Move, is a decentralized game b
 License
 =======
 
-    Copyright 2022 Nodegen.xyz
+    Copyright 2023 Werewolf and Witch
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
