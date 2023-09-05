@@ -113,13 +113,13 @@ module beast_collector::beast_exploration {
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;        
         // earning
         let earned = utils::random_with_nonce(signer::address_of(&resource_signer), 2, uuid) + 1;
-        let coins = coin::withdraw<WarCoinType>(&resource_signer, earned * 100000000);                
+        let coins = coin::withdraw<WarCoinType>(&resource_signer, earned * 90000000);                
         coin::deposit(signer::address_of(receiver), coins);
         
         // jackpot number = 777
         let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 1000, uuid) + 1;
         if(random_idx == 777) {
-            let coins = coin::withdraw<WarCoinType>(&resource_signer, 1000 * 100000000);                
+            let coins = coin::withdraw<WarCoinType>(&resource_signer, 100 * 100000000);                
             coin::deposit(signer::address_of(receiver), coins);
             let game_events = borrow_global_mut<Exploration>(exporation_address);               
             event::emit_event(&mut game_events.jackpot_events, JackpotEvent {            
@@ -153,14 +153,14 @@ module beast_collector::beast_exploration {
         let uuid = guid::creation_num(&guid);        
         let random_exp = utils::random_with_nonce(signer::address_of(&resource_signer), 30, uuid) + 1;        
         // earning
-        let earned = utils::random_with_nonce(signer::address_of(&resource_signer), 6, uuid) + 1;
+        let earned = utils::random_with_nonce(signer::address_of(&resource_signer), 4, uuid) + 1;
         let coins = coin::withdraw<WarCoinType>(&resource_signer, earned * 100000000);                
         coin::deposit(signer::address_of(receiver), coins);
         
         // jackpot number = 777
         let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 1000, uuid) + 1;
         if(random_idx == 777) {
-            let coins = coin::withdraw<WarCoinType>(&resource_signer, 1000 * 100000000);                
+            let coins = coin::withdraw<WarCoinType>(&resource_signer, 100 * 100000000);                
             coin::deposit(signer::address_of(receiver), coins);
             let game_events = borrow_global_mut<Exploration>(exporation_address);               
             event::emit_event(&mut game_events.jackpot_events, JackpotEvent {            
