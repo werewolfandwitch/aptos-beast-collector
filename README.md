@@ -1,15 +1,16 @@
 # Werewolf and Witch Aptos Beast Collector Game
 
-- Werewolf and Witch Beast Game[https://beast.werewolfandwitch.xyz/]
+- Werewolf and Witch Beast Game - [Website](https://beast.werewolfandwitch.xyz)
 
 # Description
 
-The expansion game of Werewolf and Witch, called Move, is a decentralized game based on smart contracts. Users can obtain eggs using the Trainer and progress through activities such as hatching, breeding, and evolution
+The expansion game of Werewolf and Witch, built with Move smart contract language, is a decentralized game based on smart contracts. Users can obtain eggs using the Trainer and progress through activities such as hatching, breeding, and evolution.
+
 
 License
 =======
 
-    Copyright 2022 Nodegen.xyz
+    Copyright 2023 Werewolf and Witch
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
