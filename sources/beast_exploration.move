@@ -144,7 +144,7 @@ module beast_collector::beast_exploration {
         let resource_signer = get_resource_account_cap(exporation_address);
         let coin_address = utils::coin_address<WarCoinType>();
         assert!(coin_address == @war_coin, error::permission_denied(ENOT_AUTHORIZED));
-        let price_to_pay = 200000000; // 2 WAR Coin
+        let price_to_pay = 100000000; // 1 WAR Coin
         let coins_to_pay = coin::withdraw<WarCoinType>(receiver, price_to_pay);                
         coin::deposit(signer::address_of(&resource_signer), coins_to_pay);
         
