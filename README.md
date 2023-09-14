@@ -2,10 +2,20 @@
 
 - Werewolf and Witch Beast Game - [Website](https://beast.werewolfandwitch.xyz)
 
-# Description
-
+## Description
 The expansion game of Werewolf and Witch, built with Move smart contract language, is a decentralized game based on smart contracts. Users can obtain eggs using the Trainer and progress through activities such as hatching, breeding, and evolution.
 
+## Cloning the repository
+```git clone https://github.com/werewolfandwitch/aptos-beast-collector.git```
+
+## Initialize
+Initialize with ```aptos init``` in the ```aptos-beast-collector``` folder you just cloned
+
+## Compile
+```aptos move compile --named-addresses beast_collector=default```
+
+## Publish
+```aptos move publish --named-addresses beast_collector=default```
 
 License
 =======
