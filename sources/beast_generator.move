@@ -321,7 +321,7 @@ module beast_collector::beast_generator {
             vector<vector<u8>>[
                 bcs::to_bytes<u64>(&level),
                 bcs::to_bytes<u64>(&exp),
-                bcs::to_bytes<u64>(&(timestamp::now_seconds() + 100800)) // 28 hours
+                bcs::to_bytes<u64>(&(timestamp::now_seconds() + 115200)) // 32 hours
             ],  // values 
             vector<String>[
                 string::utf8(b"u64"),
