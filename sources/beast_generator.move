@@ -304,24 +304,24 @@ module beast_collector::beast_generator {
         let pm = token::get_property_map(holder_addr, token_id);
         let level = property_map::read_u64(&pm, &string::utf8(BEAST_LEVEL));
         let exp = property_map::read_u64(&pm, &string::utf8(BEAST_EXP));
-        exp = exp + add_exp;        
+        exp = exp + add_exp;
         if(exp > 100) {
             exp = exp - 100;
             level = level + 1;
         };
-        token::mutate_one_token(            
+        token::mutate_one_token(
             &resource_signer,
             holder_addr,
             token_id,            
-            vector<String>[                    
+            vector<String>[
                 string::utf8(BEAST_LEVEL),
                 string::utf8(BEAST_EXP),
                 string::utf8(BEAST_DUNGEON_TIME)
-            ],  // property_keys                
+            ],  // property_keys
             vector<vector<u8>>[
                 bcs::to_bytes<u64>(&level),
                 bcs::to_bytes<u64>(&exp),
-                bcs::to_bytes<u64>(&(timestamp::now_seconds() + 115200)) // 32 hours
+                bcs::to_bytes<u64>(&(timestamp::now_seconds() + 122400)) // 34 hours
             ],  // values 
             vector<String>[
                 string::utf8(b"u64"),

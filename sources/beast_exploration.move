@@ -119,7 +119,7 @@ module beast_collector::beast_exploration {
         // jackpot number = 777
         let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 1000, uuid) + 1;
         if(random_idx == 777) {
-            let coins = coin::withdraw<WarCoinType>(&resource_signer, 100 * 100000000);                
+            let coins = coin::withdraw<WarCoinType>(&resource_signer, 50 * 100000000);                
             coin::deposit(signer::address_of(receiver), coins);
             let game_events = borrow_global_mut<Exploration>(exporation_address);               
             event::emit_event(&mut game_events.jackpot_events, JackpotEvent {            
@@ -160,7 +160,7 @@ module beast_collector::beast_exploration {
         // jackpot number = 777
         let random_idx = utils::random_with_nonce(signer::address_of(&resource_signer), 1000, uuid) + 1;
         if(random_idx == 777) {
-            let coins = coin::withdraw<WarCoinType>(&resource_signer, 100 * 100000000);                
+            let coins = coin::withdraw<WarCoinType>(&resource_signer, 50 * 100000000);                
             coin::deposit(signer::address_of(receiver), coins);
             let game_events = borrow_global_mut<Exploration>(exporation_address);               
             event::emit_event(&mut game_events.jackpot_events, JackpotEvent {            
